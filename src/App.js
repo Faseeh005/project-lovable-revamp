@@ -1,3 +1,4 @@
+```javascript
 import React, { useState } from 'react';
 import './App.css';
 
@@ -11,6 +12,7 @@ function App() {
   const addMedication = () => {
     // YOUR TASK: Add the new medication to the medications array
     // Hint: Use setMedications() and the spread operator [...]
+    setMedications([...medications, { name: medName, time: medTime}])
     
   };
 
@@ -34,7 +36,10 @@ function App() {
 
       <h2>My Medications:</h2>
       <ul>
-        {/* YOUR TASK: Use .map() to display each medication */}
+        {/* YOUR TASK: Use .map() to display each medication */
+         medications.map((med, index) => (
+        <li key={index}>{med.name} at {med.time}</li>
+        ))}
         
       </ul>
     </div>
@@ -42,3 +47,4 @@ function App() {
 }
 
 export default App;
+```
