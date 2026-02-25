@@ -133,3 +133,102 @@ function Measurements({ user, setActivePage }) {
   }, [user]);
 
 }
+
+function Dashboard({ user, medications, setActivePage }) {
+  // fitness - stores today's fitness data (steps, water, activities)
+  const [fitness, setFitness] = useState(null);
+
+  // Track which medications have been taken today
+  const [takenMeds, setTakenMeds] = useState({});
+
+  // Hover state for donut chart tooltip 
+  const [hoveredSegment, setHoveredSegment] = useState(null); // 'taken', 'pending', or null
+
+  // Date & Time Formatting
+  const now = new Date();
+  const dateStr = now.toLocaleDateString("en-GB", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  const timeStr = now.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  // User Data Calculations
+  const userName = user.email.split("@")[0];
+  const steps = fitness?.steps || 0;
+  const water = fitness?.water || 0;
+  const waterMl = water * 250;
+  const waterGoal = 2000;
+  const waterPct = Math.min(100, Math.round((waterMl / waterGoal) * 100));
+  const activities = fitness?.activities || [];
+  const totalMins = activities.reduce(
+    (sum, activity) => sum + (activity.duration || 0),
+    0,
+  );
+  const calories = Math.round(totalMins * 5.5);
+
+  // Calculate real medication adherence statistics
+
+  // Get today's date
+  const today = new Date().toISOString().split("T")[0];
+
+  // Count how many medications have been marked as taken
+  const takenCount = Object.values(takenMeds).filter(Boolean).length;
+
+  // Total number of medications
+  const totalMeds = medications.length;
+
+  // Count pending (not taken yet)
+  const pendingCount = totalMeds - takenCount;
+
+  // Calculate percentages for the donut chart
+  // If no medications, show 0% taken
+  const takenPercentage = totalMeds > 0 ? (takenCount / totalMeds) * 100 : 0;
+  const pendingPercentage =
+    totalMeds > 0 ? (pendingCount / totalMeds) * 100 : 100;
+
+  // ─── Load Fitness Data Effect ───────────────────────────────────────────────
+
+  useEffect(() => {
+    if (!user) return;
+
+    const today = new Date().toISOString().split("T")[0];
+    const fitnessRef = ref(database, `users/${user.uid}/fitness/${today}`);
+
+    onValue(fitnessRef, (snapshot) => {
+      setFitness(snapshot.val());
+    });
+  }, [user]);
+
+  // Load which medications have been marked as taken today
+  useEffect(() => {
+    if (!user) return;
+
+    const today = new Date().toISOString().split("T")[0];
+
+    // Reference to today's taken medications
+    const takenRef = ref(database, `users/${user.uid}/takenMeds/${today}`);
+
+    const unsubscribe = onValue(takenRef, (snapshot) => {
+      console.log("Firebase data received:", snapshot.val());
+
+      if (snapshot.val()) {
+        setTakenMeds(snapshot.val());
+        console.log("Loaded takenMeds:", snapshot.val());
+      } else {
+        setTakenMeds({});
+        console.log("No takenMeds data for today - set empty object");
+      }
+    });
+
+    return () => {
+      console.log("Cleaning up listener");
+      unsubscribe();
+    };
+  }, [user, today]);
+
+}
