@@ -92,7 +92,29 @@ function Measurements({ user, setActivePage }) {
   const today = new Date().toISOString().split("T")[0];
   const userName = user.email.split("@")[0];
 
-// loads all reminders from firebase
+  // loads measurement history from last 7 days
+  // sorts by date and reverses to show oldest first
+  useEffect(() => {
+    if (!user) return;
+    const historyRef = ref(database, `users/${user.uid}/measurements`);
+    onValue(historyRef, (snapshot) => {
+      if (snapshot.val()) {
+        const data = Object.entries(snapshot.val()).map(([date, values]) => ({
+          date,
+          ...values,
+        }));
+        const last7Days = data
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .slice(0, 7)
+          .reverse();
+        setHistory(last7Days);
+      } else {
+        setHistory([]);
+      }
+    });
+  }, [user]);
+
+  // loads all reminders from firebase
   // converts object to array for easier mapping
   useEffect(() => {
     if (!user) return;
