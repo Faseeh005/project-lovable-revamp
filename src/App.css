@@ -1,42 +1,42 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
+:root {
+  /* Primary Colors */
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-light: #dbeafe;
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
+  --color-secondary: #7c3aed;
+  --color-secondary-hover: #6d28d9;
+  --color-secondary-light: #ede9fe;
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+  /* Semantic Colors - Color Blind Safe */
+  --color-success: #0d9488;
+  --color-success-hover: #0f766e;
+  --color-success-light: #ccfbf1;
+  --color-success-text: #115e59;
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
+  --color-warning: #d97706;
+  --color-warning-hover: #b45309;
+  --color-warning-light: #fef3c7;
+  --color-warning-text: #92400e;
 
-.card {
-  padding: 2em;
-}
+  --color-error: #dc2626;
+  --color-error-hover: #b91c1c;
+  --color-error-light: #fee2e2;
+  --color-error-text: #991b1b;
 
-.read-the-docs {
-  color: #888;
+  --color-info: #0284c7;
+  --color-info-light: #e0f2fe;
+  --color-info-text: #075985;
+
+  /* Text Colors - All meet 4.5:1 contrast */
+  --color-text-primary: #1e293b;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+
+  /* Chart Colors */
+  --chart-blue: #2563eb;
+  --chart-amber: #f59e0b;
+  --chart-purple: #7c3aed;
+  --chart-teal: #0d9488;
+  --chart-orange: #ea580c;
 }
