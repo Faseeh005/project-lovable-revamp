@@ -233,6 +233,54 @@ function Dashboard({ user, medications, setActivePage }) {
 
 }
 
+function Medications({
+  user,
+  medications,
+  setActivePage,
+  voiceEnabled,
+  setVoiceEnabled,
+}) {
+  // track current Time
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Modal visibility - controls whether the "Add Medication" modal is shown
+  const [showModal, setShowModal] = useState(false);
+
+  // Form fields for adding a new medication
+  const [medName, setMedName] = useState(""); // e.g. "Aspirin"
+  const [medDosage, setMedDosage] = useState(""); // e.g. "100mg"
+  const [medFreq, setMedFreq] = useState("Once daily"); // How often to take it
+  const [medTimeSlot, setMedTimeSlot] = useState("Morning"); // Morning/Afternoon/Evening/Night
+  const [medTime, setMedTime] = useState("08:00"); // Specific time
+  const [medNotes, setMedNotes] = useState(""); // Additional instructions
+
+  // Track which medications have been marked as taken today
+  // Structure: { medicationId: true/false }
+  const [takenMeds, setTakenMeds] = useState({});
+
+  // ID of medication currently being edited (null if none)
+  const [editingId, setEditingId] = useState(null);
+
+  // Get today's date for tracking which meds were taken
+  const today = new Date().toISOString().split("T")[0];
+
+  // Time Display Helper Function
+
+  // Convert 24-hour time (e.g. "14:30") to 12-hour format (e.g. "2:30 PM")
+  const timeDisplay = (time) => {
+    // return empty if no time provided
+    if (!time) return "";
+
+    // Split time into hours and minutes
+    const [hours, minutes] = time.split(":");
+    const hour = parseInt(hours);
+
+    // Convert to 12-hour format
+    return `${hour > 12 ? hour - 12 : hour || 12}:${minutes} ${hour >= 12 ? "PM" : "AM"}`;
+  };
+
+}
+
 export default function App() {
 
   // user - the currently logged-in user (null if not logged in)
