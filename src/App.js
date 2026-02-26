@@ -232,3 +232,82 @@ function Dashboard({ user, medications, setActivePage }) {
   }, [user, today]);
 
 }
+
+export default function App() {
+
+  // user - the currently logged-in user (null if not logged in)
+  const [user, setUser] = useState(null);
+
+  // checking authentication status
+  const [loading, setLoading] = useState(true);
+
+  // array of all medications for the current user
+  const [medications, setMedications] = useState([]);
+
+  const [reminders, setReminders] = useState([]);
+
+  // chooses which page to show (dashboard, medications, ...)
+  const [activePage, setActivePage] = useState("dashboard");
+
+  // controls whether voice announcements are on/off
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
+
+  // Large text mode for accessibility
+  const [largeTextEnabled, setLargeTextEnabled] = useState(false);
+
+  // High contrast mode for accessibility
+  const [highContrastEnabled, setHighContrastEnabled] = useState(false);
+
+  // Authentication Listener Effect
+
+  // Listen for authentication state changes (login/logout)
+  // This effect runs once when the app starts
+  useEffect(() => {
+    // onAuthStateChanged listens for login/logout events
+    // It returns an unsubscribe function to clean up the listener
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      // Update user state with current logged-in user (or null)
+      setUser(currentUser);
+
+      // We're done checking auth status
+      setLoading(false);
+    });
+
+    // Cleanup function - stops listening when component unmounts
+    return () => unsubscribe();
+  }, []); // Empty dependency array = run once on mount
+
+  // Load Medications Effect
+
+  // Load all medications for the current user
+  useEffect(() => {
+    // If no user is logged in, clear medications
+    if (!user) {
+      setMedications([]);
+      return;
+    }
+
+    // Create reference to user's medications in Firebase
+    const medsRef = ref(database, `users/${user.uid}/medications`);
+
+    // Listen for changes to medications in real-time
+    onValue(medsRef, (snapshot) => {
+      const data = snapshot.val();
+
+      if (data) {
+        // Convert Firebase object to array
+        // Firebase stores data as: { id1: {name, time}, id2: {name, time} }
+        // We convert to: [{ id: id1, name, time }, { id: id2, name, time }]
+        const medsArray = Object.keys(data).map((key) => ({
+          id: key,
+          ...data[key],
+        }));
+
+        setMedications(medsArray);
+      } else {
+        // No medications found
+        setMedications([]);
+      }
+    });
+  }, [user]); // Re-run when user changes (login/logout)
+}
