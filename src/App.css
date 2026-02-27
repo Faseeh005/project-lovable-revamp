@@ -40,3 +40,1134 @@
   --chart-teal: #0d9488;
   --chart-orange: #ea580c;
 }
+
+/* Universal selector (*) applies to ALL elements */
+* {
+  margin: 0; /* Remove default margins from all elements */
+  padding: 0; /* Remove default padding from all elements */
+  box-sizing: border-box; /* Include padding and border in element's total width/height */
+}
+
+/* Body element - the entire page */
+body {
+  font-family:
+    "Segoe UI",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif; /* Font stack - tries Segoe UI first, falls back to system fonts */
+  background: #f1f5f9; /* Light grey background color */
+  color: #1e293b; /* Dark grey text color */
+  min-height: 100vh; /* Minimum height of 100% of viewport height */
+}
+
+/* Root app container */
+.app-root {
+  min-height: 100vh; /* Fill entire screen height */
+  background: #f1f5f9; /* Same as body background */
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   2. PAGE LAYOUT
+   These styles control the overall page structure
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Main page container - wraps all content on each page */
+.page {
+  max-width: 1200px; /* Don't get wider than 1200px */
+  margin: 0 auto; /* Center horizontally (0 top/bottom, auto left/right) */
+  padding: 24px; /* Spacing inside the container */
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   3. HEADERS & NAVIGATION
+   Styles for page headers, navigation bars, and title areas
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Page header bar - appears at top of each page */
+.page-header-bar {
+  display: flex; /* Use flexbox layout */
+  justify-content: space-between; /* Push left and right content apart */
+  align-items: center; /* Vertically center items */
+  margin-bottom: 24px; /* Space below header */
+  padding-bottom: 16px; /* Space inside bottom of header */
+  border-bottom: 1px solid #e2e8f0; /* Subtle bottom border line */
+}
+
+/* Main page title text */
+.page-title-main {
+  font-size: 22px; /* Large text size */
+  font-weight: 700; /* Bold text (700 = bold, 400 = normal) */
+  color: #0f172a; /* Very dark grey, almost black */
+}
+
+/* Subtitle text under main title */
+.page-subtitle {
+  font-size: 13px; /* Small text */
+  color: #64748b; /* Medium grey */
+  margin-top: 2px; /* Tiny space above */
+}
+
+/* Right side of header (contains user info, buttons) */
+.header-right {
+  display: flex; /* Use flexbox */
+  align-items: center; /* Vertically center items */
+  gap: 12px; /* Space between items (modern CSS - creates 12px gaps) */
+}
+
+/* Username display text */
+.header-user {
+  font-size: 14px;
+  color: #475569; /* Dark grey */
+}
+
+/* Online status indicator dot */
+.online-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%; /* Makes it circular (50% = perfect circle) */
+  background: var(--color-success);
+  display: inline-flex; /* Allows width/height to work on span element */
+  align-items: center;
+  justify-content: center;
+  font-size: 6px;
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+.online-dot::after {
+  content: "●";
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(13, 148, 136, 0);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   4. BUTTONS
+   All button styles throughout the app
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Back button (arrow to go back) */
+.back-btn {
+  background: none; /* No background color */
+  border: none; /* No border */
+  cursor: pointer; /* Show hand cursor on hover */
+  font-size: 14px;
+  color: #475569;
+  padding: 4px 8px;
+  border-radius: 6px; /* Slightly rounded corners */
+  transition: all 0.15s; /* Smooth transition for hover effects (0.15 seconds) */
+}
+
+/* Back button on hover (when mouse is over it) */
+.back-btn:hover {
+  background: #f1f5f9; /* Light grey background appears */
+  color: #0f172a; /* Text becomes darker */
+}
+
+/* Logout button */
+.logout-btn {
+  display: flex; /* Use flexbox for icon + text alignment */
+  align-items: center;
+  gap: 6px; /* Space between icon and text */
+  padding: 7px 14px;
+  border: 1px solid #e2e8f0; /* Light grey border */
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #475569;
+  transition: all 0.15s;
+}
+
+/* Logout button hover state */
+.logout-btn:hover {
+  background: #fef2f2; /* Light red background */
+  color: #ef4444; /* Red text */
+  border-color: #ef4444; /* Red border */
+}
+
+/* Bell notification button */
+.bell-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Voice ON button (dark background) */
+.voice-btn {
+  padding: 7px 14px;
+  background: #1e293b; /* Dark grey/navy */
+  color: white;
+  border: none;
+  border-radius: 20px; /* Very rounded (pill shape) */
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600; /* Semi-bold */
+}
+
+/* Voice button with purple outline */
+.voice-outline-btn {
+  padding: 7px 14px;
+  background: white;
+  color: #8b5cf6; /* Purple */
+  border: 1px solid #8b5cf6;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* Edit button with dark background */
+.edit-dark-btn {
+  padding: 7px 16px;
+  background: #1e293b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* User avatar circle */
+.avatar-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%; /* Makes it circular */
+  background: #667eea; /* Purple/blue color */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centers the letter inside */
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   5. CARDS & CONTAINERS
+   Reusable card/box components
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* White card container */
+.card-white {
+  background: white;
+  border: 1px solid #e2e8f0; /* Light grey border */
+  border-radius: 14px; /* Rounded corners */
+  padding: 24px; /* Space inside the card */
+  margin-bottom: 20px; /* Space below the card */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06); /* Subtle shadow (x, y, blur, color with transparency) */
+}
+
+/* Section title inside cards */
+.section-title {
+  font-size: 16px;
+  font-weight: 600; /* Semi-bold */
+  color: #0f172a;
+  margin-bottom: 16px;
+}
+
+/* Larger section title */
+.section-title-lg {
+  font-size: 18px;
+  font-weight: 700; /* Bold */
+  color: #0f172a;
+  margin-bottom: 16px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   6. DASHBOARD COMPONENTS
+   Styles specific to the Dashboard page
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Welcome banner */
+.welcome-banner {
+  background: var(--color-primary, #2563eb);
+  border-radius: 16px;
+  padding: 28px 32px;
+  color: white;
+  margin-bottom: 24px;
+}
+
+/* Welcome banner h2 heading */
+.welcome-banner h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+/* Welcome banner paragraph */
+.welcome-banner p {
+  font-size: 15px;
+  opacity: 0.9; /* Slightly transparent (90% opacity) */
+}
+
+/* Stats cards row (grid layout) */
+.stats-row {
+  display: grid; /* Use CSS Grid layout */
+  /* Create columns that auto-fit, each min 200px, max 1fr (equal fraction) */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px; /* Space between grid items */
+  margin-bottom: 24px;
+}
+
+/* Individual stat card on dashboard */
+.stat-card-dash {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex; /* Icon and text side by side */
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* Icon circle in stat card */
+.stat-icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  background: rgba(0, 0, 0, 0.05); /* 5% black = light grey */
+}
+
+/* Small label in stat card */
+.stat-label-sm {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 2px;
+}
+
+/* Large value number in stat card */
+.stat-value-lg {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Subtitle in stat card */
+.stat-sub {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* ─── WATER INTAKE TRACKER ─── */
+
+/* Row showing water progress label */
+.water-row {
+  display: flex;
+  justify-content: space-between; /* Label left, amount right */
+  margin-bottom: 8px;
+}
+
+.water-label {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.water-amount {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Progress bar background (grey track) */
+.progress-bar-bg {
+  background: #e2e8f0;
+  border-radius: 999px; /* Very large radius = pill shape */
+  height: 12px;
+  overflow: hidden; /* Hide anything outside rounded corners */
+}
+
+/* Progress bar fill (dark part that grows) */
+.progress-bar-fill {
+  background: #0f172a; /* Dark grey/black */
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s; /* Animate width changes over 0.4 seconds */
+}
+
+/* Percentage text */
+.progress-pct {
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+  margin: 6px 0 14px;
+}
+
+/* Water buttons container */
+.water-btns {
+  display: flex;
+  gap: 12px;
+}
+
+/* Individual water button */
+.water-btn {
+  flex: 1; /* Each button takes equal space */
+  padding: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #475569;
+  transition: all 0.15s;
+}
+
+/* Water button hover effect */
+.water-btn:hover {
+  background: #e0f2fe; /* Light blue */
+  border-color: #3b82f6; /* Blue border */
+  color: #3b82f6; /* Blue text */
+}
+
+/* ─── CHARTS ─── */
+
+/* Charts row (2 charts side by side) */
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.chart-card {
+  margin-bottom: 0 !important; /* Override default margin */
+}
+
+/* Bar chart container */
+.bar-chart {
+  display: flex;
+  align-items: flex-end; /* Align bars to bottom */
+  gap: 8px;
+  height: 160px;
+  padding-top: 10px;
+}
+
+/* Individual bar column */
+.bar-col {
+  flex: 1; /* Equal width for all bars */
+  display: flex;
+  flex-direction: column; /* Stack bar and label vertically */
+  align-items: center;
+  gap: 4px;
+}
+
+/* Bar fill (the colored part) */
+.bar-fill {
+  width: 100%;
+  background: #3b82f6; /* Blue */
+  border-radius: 4px 4px 0 0; /* Rounded top corners only */
+  min-height: 4px; /* Minimum height even for 0 values */
+  transition: height 0.3s; /* Animate height changes */
+}
+
+/* Day label under bar */
+.bar-label {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+/* Donut chart wrapper */
+.donut-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0;
+}
+
+/* Donut SVG chart */
+.donut-svg {
+  width: 120px;
+  height: 120px;
+}
+
+/* Donut chart legend */
+.donut-legend {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 13px;
+  color: #475569;
+}
+
+/* Legend colored dot */
+.legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.legend-dot.green {
+  background: var(--color-success);
+}
+.legend-dot.orange {
+  background: var(--color-warning);
+  border: 2px dashed white;
+  box-shadow: 0 0 0 1px var(--color-warning);
+}
+
+.legend-dot.red {
+  background: var(--color-error);
+}
+
+/* ─── QUICK ACTIONS GRID ─── */
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+/* Quick action card (clickable) */
+.quick-action-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+
+/* Quick action hover effect */
+.quick-action-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Deeper shadow */
+  transform: translateY(-1px); /* Move up 1px */
+}
+
+.qa-icon {
+  font-size: 28px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  border-radius: 10px;
+}
+
+.qa-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.qa-sub {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   7. MEDICATIONS PAGE
+   Styles for medication management page
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Progress banner at top of medications page */
+.progress-banner {
+  background: linear-gradient(
+    135deg,
+    #3b82f6,
+    #8b5cf6
+  ); /* Blue to purple gradient */
+  border-radius: 14px;
+  padding: 24px 28px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 24px;
+}
+
+/* Progress text section (left) */
+.progress-banner > div:first-child {
+  flex: 0 0 auto; /* Stays same size */
+}
+
+.progress-banner h3 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.progress-banner p {
+  font-size: 13px;
+  opacity: 0.85;
+  margin: 4px 0 12px;
+}
+
+/* Progress bar in banner */
+.banner-progress-bar {
+  background: rgba(255, 255, 255, 0.3); /* 30% white = light overlay */
+  border-radius: 999px;
+  height: 8px;
+  width: 300px;
+  overflow: hidden;
+}
+
+.banner-progress-fill {
+  background: white;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s;
+}
+
+/* Large percentage on right side of banner */
+.banner-pct {
+  flex: 0 0 auto;
+  font-size: 48px;
+  font-weight: 800;
+  text-align: center;
+  line-height: 1; /* Remove extra spacing above/below text */
+  min-width: 100px;
+}
+
+.banner-pct span {
+  font-size: 14px;
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+/* ─── ADD MEDICATION BUTTON ─── */
+
+.add-med-btn {
+  padding: 10px 20px;
+  background: var(--color-primary);
+  color: white;
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+
+.add-med-btn:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.add-med-btn:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ─── MEDICATION CARDS ─── */
+
+/* Grid of medication cards */
+.med-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+/* Individual medication card */
+.med-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  overflow: hidden; /* Hide content outside rounded corners */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* Card header with gradient */
+.med-card-header {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.med-card-icon {
+  font-size: 20px;
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.med-card-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+}
+
+/* Card body (main content) */
+.med-card-body {
+  padding: 16px;
+}
+
+/* Row showing medication details */
+.med-detail-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+/* Individual detail column */
+.med-detail {
+  flex: 1;
+}
+
+.med-detail-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase; /* ALL CAPS */
+  letter-spacing: 0.5px; /* Spacing between letters */
+}
+
+.med-detail-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+  margin-top: 2px;
+}
+
+.med-detail-value.blue {
+  color: #3b82f6;
+} /* Blue colored value */
+
+/* Medication status badge */
+.med-status {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.med-status.taken {
+  color: var(--color-success-text);
+}
+
+.med-status.taken::before {
+  content: "✓";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: var(--color-success);
+  color: white;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.med-status.pending {
+  color: var(--color-warning-text);
+}
+
+.med-status.pending::before {
+  content: "⏱";
+  font-size: 16px;
+}
+
+/* Action buttons row */
+.med-card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Mark as Taken button */
+.mark-taken-btn {
+  flex: 1; /* Takes up remaining space */
+  padding: 10px 16px;
+  background: var(--color-success);
+  color: white;
+  border: 2px solid var(--color-success);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+
+.mark-taken-btn:hover {
+  background: var(--color-success-hover);
+  border-color: var(--color-success-hover);
+}
+
+.mark-taken-btn:focus-visible {
+  outline: 3px solid var(--color-success);
+  outline-offset: 2px;
+}
+
+/* Already taken state */
+.mark-taken-btn.already-taken {
+  background: var(--color-success-light);
+  color: var(--color-success-text);
+  border-color: var(--color-success);
+  cursor: default; /* Normal cursor (not clickable) */
+}
+
+.mark-taken-btn.already-taken::before {
+  content: "✓ ";
+  font-weight: 700;
+}
+
+/* Small icon buttons (Voice, Edit, Delete) */
+.med-icon-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s;
+}
+
+/* Different background colors for each button */
+.med-icon-btn.purple {
+  background: #f5f3ff;
+} /* Light purple */
+.med-icon-btn.blue {
+  background: #eff6ff;
+} /* Light blue */
+.med-icon-btn.red {
+  background: #fef2f2;
+} /* Light red */
+
+/* ─── ADD MEDICATION MODAL ─── */
+
+/* Dark overlay behind modal */
+.modal-overlay {
+  position: fixed; /* Stay in place even when scrolling */
+  inset: 0; /* Cover entire screen (top: 0, right: 0, bottom: 0, left: 0) */
+  background: rgba(0, 0, 0, 0.5); /* 50% black = dark overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Appear above everything else */
+}
+
+/* Modal box */
+.modal {
+  background: white;
+  border-radius: 16px;
+  width: 540px;
+  max-width: 95vw; /* Don't exceed 95% of screen width */
+  max-height: 90vh; /* Don't exceed 90% of screen height */
+  overflow-y: auto; /* Scroll if content is too tall */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); /* Deep shadow */
+}
+
+/* Modal header */
+.modal-header {
+  padding: 24px 24px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.modal-sub {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+/* Close button (X) */
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 4px;
+}
+
+/* Modal body (form content) */
+.modal-body {
+  padding: 20px 24px;
+}
+
+/* Modal footer (buttons) */
+.modal-footer {
+  padding: 0 24px 24px;
+  display: flex;
+  justify-content: flex-end; /* Buttons on right side */
+  gap: 10px;
+}
+
+.modal-cancel {
+  padding: 10px 20px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #475569;
+}
+
+.modal-submit {
+  padding: 10px 24px;
+  background: #0f172a; /* Dark grey/navy */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ─── FORM ELEMENTS ─── */
+
+.form-label {
+  display: block; /* Takes full width */
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+  margin-top: 14px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none; /* Remove default blue outline */
+  transition: border-color 0.15s;
+  color: #0f172a;
+  background: white;
+}
+
+/* Input when focused (user is typing) */
+.form-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); /* Blue glow */
+}
+
+/* Placeholder text inside input */
+.form-input::placeholder {
+  color: #94a3b8;
+}
+
+/* Row of form inputs side by side */
+.form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.form-row .form-group {
+  flex: 1; /* Equal width columns */
+}
+
+/* Textarea (multi-line input) */
+.form-textarea {
+  min-height: 80px;
+  resize: vertical; /* Only allow vertical resizing */
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   8. FITNESS PAGE
+   Styles for fitness tracking page
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Steps banner at top */
+.steps-banner {
+  background: linear-gradient(135deg, #3b82f6, #06b6d4); /* Blue to cyan */
+  border-radius: 14px;
+  padding: 28px 32px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.steps-label {
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.85;
+  text-transform: uppercase;
+  letter-spacing: 1px; /* Extra space between letters */
+}
+
+.steps-value {
+  font-size: 42px;
+  font-weight: 800;
+  margin: 4px 0;
+}
+
+.steps-sub {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.steps-icon {
+  font-size: 60px;
+  opacity: 0.3; /* Very transparent = watermark effect */
+}
+
+/* ─── WORKOUT CARDS ─── */
+
+.workout-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.workout-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.workout-card-top {
+  margin-bottom: 16px;
+}
+
+.workout-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.editable-tag {
+  display: inline-block;
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-top: 2px;
+}
+
+/* Stats row (Count and Duration) */
+.workout-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.workout-stat {
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.workout-stat.blue-bg {
+  background: #eff6ff;
+} /* Light blue */
+.workout-stat.green-bg {
+  background: #f0fdf4;
+} /* Light green */
+
+.workout-stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+}
+
+.workout-stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.workout-stat-value.blue {
+  color: #3b82f6;
+}
+.workout-stat-value.green {
+  color: #22c55e;
+}
+
+.workout-last-updated {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 10px;
+}
+
+/* Action buttons */
+.workout-actions {
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 10px;
+}
+
+.workout-action-btn {
+  flex: 1;
+  padding: 8px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #475569;
+  transition: all 0.15s;
+}
+
+.workout-action-btn:hover {
+  background: #f8fafc;
+}
+
+.workout-delete-btn {
+  padding: 8px 10px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #ef4444; /* Red */
+  transition: all 0.15s;
+}
+
+/* ─── SUMMARY STATS ─── */
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.summary-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.summary-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 6px 0 4px;
+}
+
+.summary-label {
+  font-size: 12px;
+  color: #64748b;
+}
