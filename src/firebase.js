@@ -9,7 +9,7 @@ const firebaseConfig = {
   storageBucket: "medfit-health-app.firebasestorage.app",
   messagingSenderId: "257682947478",
   appId: "1:257682947478:web:b5d681b7eba5d472ef31b7",
-  databaseURL: "https://medfit-health-app-default-rtdb.europe-west1.firebasedatabase.app"  // CHANGED THIS LINE
+  databaseURL: "https://medfit-health-app-default-rtdb.europe-west1.firebasedatabase.app"
 };
 
 const app = initializeApp(firebaseConfig);

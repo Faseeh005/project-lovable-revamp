@@ -1,7 +1,3 @@
-// Chat bot component
-// This component provides a chatbot interface where users can ask health questions
-// It uses pattern matching to provide relevant health information
-
 import React, { useState, useEffect, useRef } from "react";
 
 // Import Firebase for database operations
@@ -340,7 +336,7 @@ function Chat({ user, setActivePage, voiceEnabled, setVoiceEnabled }) {
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ fontSize: 20 }}>🤖</span>
-              <h1 className="page-title-main">Health Assistant</h1>
+              <h1 className="page-title-main">Smart Health Assistant</h1>
             </div>
             <p className="page-subtitle">Your Personal Healthcare Companion</p>
           </div>
@@ -456,39 +452,3 @@ function Chat({ user, setActivePage, voiceEnabled, setVoiceEnabled }) {
 }
 
 export default Chat;
-
-// ══════════════════════════════════════════════════════════════════════════════
-// HOW THIS COMPONENT WORKS - STEP BY STEP
-// ══════════════════════════════════════════════════════════════════════════════
-//
-// 1. COMPONENT INITIALIZATION
-//    - Component loads with welcome message already in messages array
-//    - Loads user's medications and fitness data from Firebase
-//    - Displays sidebar with quick questions
-//
-// 2. USER TYPES A MESSAGE
-//    - Input value updates as they type (controlled component)
-//    - User presses Enter or clicks Send button
-//    - sendMessage function is called
-//
-// 3. MESSAGE PROCESSING
-//    - User message is added to messages array (shows in chat immediately)
-//    - Input field is cleared
-//    - Loading state is set to true (shows "Thinking...")
-//
-// 4. AI RESPONSE GENERATION
-//    - generateResponse function analyzes user input
-//    - Uses pattern matching (if/else) to determine topic
-//    - Checks user's personal data (medications, fitness) for personalization
-//    - Returns appropriate response text
-//
-// 5. DISPLAYING RESPONSE
-//    - After 800ms delay, AI message is added to messages array
-//    - Loading state set to false (removes "Thinking...")
-//    - Auto-scroll effect runs to show new message
-//
-// 6. QUICK QUESTIONS
-//    - User can click any quick question button
-//    - Sends that question text directly (same as typing it)
-//
-// ══════════════════════════════════════════════════════════════════════════════

@@ -1,7 +1,3 @@
-// ══════════════════════════════════════════════════════════════════════════════
-// IMPORTS - Bringing in all the tools and components we need
-// ══════════════════════════════════════════════════════════════════════════════
-
 // React and hooks - the foundation of our React app
 import React, { useState, useEffect } from "react";
 
@@ -30,11 +26,9 @@ import {
 } from "./Notifications";
 import { type } from "firebase/firestore/pipelines";
 
-// ══════════════════════════════════════════════════════════════════════════════
 // VOICE ASSISTANT UTILITY FUNCTION
 // This function converts text to speech using the Web Speech API
 // Built into all modern browsers - no libraries needed!
-// ══════════════════════════════════════════════════════════════════════════════
 
 const speak = (text, isEnabled) => {
   // If voice is disabled, don't speak
@@ -793,26 +787,23 @@ function Measurements({ user, setActivePage }) {
   );
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
 // DASHBOARD COMPONENT
 // This is the main home page users see when they log in
 // Shows overview of health stats, water intake, charts, and quick action buttons
-// ══════════════════════════════════════════════════════════════════════════════
 
 function Dashboard({ user, medications, setActivePage }) {
-  // ─── State Variables ────────────────────────────────────────────────────────
 
   // fitness - stores today's fitness data (steps, water, activities)
   const [fitness, setFitness] = useState(null);
 
-  // ═══ NEW: Track which medications have been taken today ═══
+  // Track which medications have been taken today
   // This is the same state we use in the Medications page
   const [takenMeds, setTakenMeds] = useState({});
 
-  // ═══ NEW: Hover state for donut chart tooltip ═══
+  // Hover state for donut chart tooltip
   const [hoveredSegment, setHoveredSegment] = useState(null); // 'taken', 'pending', or null
 
-  // ─── Date & Time Formatting ─────────────────────────────────────────────────
+  // Date & Time Formatting
 
   const now = new Date();
   const dateStr = now.toLocaleDateString("en-GB", {
@@ -826,7 +817,7 @@ function Dashboard({ user, medications, setActivePage }) {
     minute: "2-digit",
   });
 
-  // ─── User Data Calculations ─────────────────────────────────────────────────
+  // User Data Calculations
 
   const userName = user.email.split("@")[0];
   const steps = fitness?.steps || 0;
@@ -841,7 +832,7 @@ function Dashboard({ user, medications, setActivePage }) {
   );
   const calories = Math.round(totalMins * 5.5);
 
-  // ═══ NEW: Calculate REAL medication adherence statistics ═══
+  // Calculate REAL medication adherence statistics
 
   // Get today's date
   const today = new Date().toISOString().split("T")[0];
@@ -861,7 +852,7 @@ function Dashboard({ user, medications, setActivePage }) {
   const pendingPercentage =
     totalMeds > 0 ? (pendingCount / totalMeds) * 100 : 100;
 
-  // ─── Load Fitness Data Effect ───────────────────────────────────────────────
+  // Load Fitness Data Effect
 
   useEffect(() => {
     if (!user) return;
@@ -904,7 +895,7 @@ function Dashboard({ user, medications, setActivePage }) {
     };
   }, [user, today]);
 
-  // ─── Add Water Function ─────────────────────────────────────────────────────
+  // Add Water Function
 
   const addWater = (ml) => {
     const today = new Date().toISOString().split("T")[0];
@@ -999,13 +990,13 @@ function Dashboard({ user, medications, setActivePage }) {
 
   const nextMed = getNextMedication();
 
-  // ─── Mock Data for Weekly Steps Chart ──────────────────────────────────────
+  // Mock Data for Weekly Steps Chart
 
   const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const mockSteps = [0, 0, 0, 0, 0, 0, steps || 0];
   const maxSteps = Math.max(...mockSteps, 1);
 
-  // ═══ NEW: Calculate donut chart values ═══════════════════════════════════
+  //Calculate donut chart values
 
   // SVG circle circumference calculation
   // For a circle with radius 35, circumference = 2 * π * r = 2 * 3.14159 * 35 ≈ 220
@@ -1019,11 +1010,11 @@ function Dashboard({ user, medications, setActivePage }) {
   // Starting position for pending segment (after taken segment)
   const pendingOffset = 55 - takenDashLength;
 
-  // ─── Render Dashboard UI ────────────────────────────────────────────────────
+  // Render Dashboard UI
 
   return (
     <div className="page">
-      {/* ═══ PAGE HEADER ═══ */}
+      {/* PAGE HEADER */}
       <div className="page-header-bar">
         <div>
           <h1 className="page-title-main">HealthCare Dashboard</h1>
@@ -1044,7 +1035,7 @@ function Dashboard({ user, medications, setActivePage }) {
         </div>
       </div>
 
-      {/* ═══ WELCOME BANNER ═══ */}
+      {/* WELCOME BANNER */}
       <div className="welcome-banner">
         <div>
           <h2>
@@ -1086,7 +1077,7 @@ function Dashboard({ user, medications, setActivePage }) {
         </div>
       )}
 
-      {/* ═══ STATS CARDS ROW ═══ */}
+      {/* STATS CARDS ROW */}
       <div className="stats-row">
         {[
           {
@@ -1133,7 +1124,7 @@ function Dashboard({ user, medications, setActivePage }) {
         ))}
       </div>
 
-      {/* ═══ WATER INTAKE TRACKER ═══ */}
+      {/* WATER INTAKE TRACKER */}
       <div className="card-white">
         <h3 className="section-title">💧 Water Intake</h3>
 
@@ -1162,9 +1153,9 @@ function Dashboard({ user, medications, setActivePage }) {
         </div>
       </div>
 
-      {/* ═══ CHARTS ROW (2 charts side by side) ═══ */}
+      {/* CHARTS ROW (2 charts side by side) */}
       <div className="charts-row">
-        {/* ─── WEEKLY STEPS BAR CHART ─── */}
+        {/* WEEKLY STEPS BAR CHART */}
         <div className="card-white chart-card">
           <h3 className="section-title">Weekly Steps</h3>
 
@@ -1180,11 +1171,11 @@ function Dashboard({ user, medications, setActivePage }) {
             ))}
           </div>
         </div>
-        {/* ─── MEDICATION ADHERENCE DONUT CHART (SIMPLIFIED) ─── */}
+        {/* MEDICATION ADHERENCE DONUT CHART (SIMPLIFIED) */}
         <div className="card-white chart-card">
           <h3 className="section-title">Medication Adherence</h3>
 
-          {/* ═══ SIMPLIFIED DONUT CHART ═══ */}
+          {/* SIMPLIFIED DONUT CHART */}
           <div
             className="donut-wrap"
             style={{ position: "relative" }}
@@ -1196,7 +1187,7 @@ function Dashboard({ user, medications, setActivePage }) {
               {Math.round(takenPercentage)}% complete)
             </span>
             <svg viewBox="0 0 100 100" className="donut-svg">
-              {/* ═══ PENDING SEGMENT (ORANGE) - FULL BACKGROUND ═══ */}
+              {/* PENDING SEGMENT (ORANGE) - FULL BACKGROUND */}
               {/* This draws first as the background (full circle if all pending) */}
               <circle
                 cx="50"
@@ -1214,7 +1205,7 @@ function Dashboard({ user, medications, setActivePage }) {
                 }}
               />
 
-              {/* ═══ TAKEN SEGMENT (GREEN) - OVERLAYS ON TOP ═══ */}
+              {/* TAKEN SEGMENT (GREEN) - OVERLAYS ON TOP */}
               {/* This draws on top, showing how much has been taken */}
               {/* Only shows if takenPercentage > 0 */}
               {takenPercentage > 0 && (
@@ -1239,7 +1230,7 @@ function Dashboard({ user, medications, setActivePage }) {
               )}
             </svg>
 
-            {/* ═══ HOVER TOOLTIP ═══ */}
+            {/* HOVER TOOLTIP */}
             {hoveredSegment && (
               <div className="donut-tooltip">
                 {hoveredSegment === "taken" ? (
@@ -1255,7 +1246,7 @@ function Dashboard({ user, medications, setActivePage }) {
             )}
           </div>
 
-          {/* ═══ SIMPLIFIED LEGEND ═══ */}
+          {/* SIMPLIFIED LEGEND */}
           <div className="donut-legend">
             <span>
               <span className="legend-dot green"></span>
@@ -1268,21 +1259,14 @@ function Dashboard({ user, medications, setActivePage }) {
           </div>
         </div>
         {/*
-        ══════════════════════════════════════════════════════════════════════════════
-        HOW THIS WORKS - NO GAPS VERSION: LAYER 1 (BACKGROUND): - Full orange
-        circle (360 degrees) - Represents ALL medications (taken + pending)
-        LAYER 2 (OVERLAY): - Green circle drawn on top - Only shows the
-        percentage that's been taken - Uses strokeDasharray to control how much
-        is visible - Starts at top (transform: rotate(-90)) RESULT: - If 0%
-        taken → Full orange circle - If 50% taken → Half green, half orange - If
-        100% taken → Full green circle - NO GAPS! Always a complete circle!
-        HOVER: - Mouse over green → Shows "Taken: X" - Mouse over orange → Shows
-        "Pending: X" - Tooltip appears in center with count
-        ══════════════════════════════════════════════════════════════════════════════
+        A full orange circle represents all medications. A green overlay circle shows the portion taken,
+        controlled by strokeDasharray and rotated −90° to start at the top. 
+        The circle is always complete with no gaps: 0% = all orange, 50% = half green/orange,
+        100% = all green. On hover, tooltips display taken or pending counts in the center.
         */}
       </div>
 
-      {/* ═══ QUICK ACTIONS GRID ═══ */}
+      {/* QUICK ACTIONS GRID */}
       <h3 className="section-title" style={{ marginTop: 24 }}>
         Quick Actions
       </h3>
@@ -1349,41 +1333,10 @@ function Dashboard({ user, medications, setActivePage }) {
   );
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// HOW THE REAL DATA WORKS
-// ══════════════════════════════════════════════════════════════════════════════
-//
-// 1. LOADING DATA:
-//    - useEffect loads today's takenMeds from Firebase
-//    - takenMeds = { med1: true, med2: false, med3: true }
-//
-// 2. CALCULATING STATS:
-//    - takenCount = count of 'true' values (medications marked as taken)
-//    - pendingCount = totalMeds - takenCount
-//    - percentages calculated from these counts
-//
-// 3. DONUT CHART:
-//    - Green segment size = takenPercentage
-//    - Orange segment size = pendingPercentage
-//    - Both segments update in REAL-TIME when you mark meds as taken!
-//
-// 4. HOVER TOOLTIP:
-//    - Mouse enters segment → setHoveredSegment('taken' or 'pending')
-//    - Tooltip appears showing the exact count and percentage
-//    - Mouse leaves → setHoveredSegment(null) → tooltip disappears
-//
-// 5. SYNCING:
-//    - When you mark a medication as taken on the Medications page
-//    - Firebase updates → onValue listener fires → takenMeds updates
-//    - Dashboard chart automatically re-renders with new data!
-//
-// ══════════════════════════════════════════════════════════════════════════════
 
-// ══════════════════════════════════════════════════════════════════════════════
 // MEDICATIONS COMPONENT
 // Page for viewing, adding, editing, and marking medications as taken
 // Shows gradient cards for each medication with status tracking
-// ══════════════════════════════════════════════════════════════════════════════
 
 function Medications({
   user,
@@ -1392,8 +1345,6 @@ function Medications({
   voiceEnabled,
   setVoiceEnabled,
 }) {
-  // ─── State Variables ────────────────────────────────────────────────────────
-
   // track current Time
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -1418,7 +1369,7 @@ function Medications({
   // Get today's date for tracking which meds were taken
   const today = new Date().toISOString().split("T")[0];
 
-  // ─── Time Display Helper Function ───────────────────────────────────────────
+  // Time Display Helper Function
 
   // Convert 24-hour time (e.g. "14:30") to 12-hour format (e.g. "2:30 PM")
   const timeDisplay = (time) => {
@@ -1515,7 +1466,7 @@ function Medications({
     return () => clearInterval(timer);
   }, []);
 
-  // ─── Load "Taken" Status Effect ─────────────────────────────────────────────
+  // Load "Taken" Status Effect
 
   // Load which medications have been marked as taken today
   useEffect(() => {
@@ -1546,56 +1497,7 @@ function Medications({
     return () => unsubscribe();
   }, [user, today]);
 
-  // ═══ Clean up takenMeds when medications change ═══════════════════════
-  // This effect runs whenever the medications array changes
-  // It removes any takenMeds entries for medications that no longer exist
-  /*useEffect(() => {
-    if (!user || !medications.length || !Object.keys(takenMeds).length) return;
-
-    // Build a set of all valid dose keys
-    const validDoseKeys = new Set();
-
-    medications.forEach((med) => {
-      const doseTimes = getDoseTimes(med.frequency);
-      doseTimes.forEach((slot) => {
-        const doseKey = `${med.id}_${slot}`;
-        validDoseKeys.add(doseKey);
-      });
-    });
-
-    // Find dose keys that don't match any current medication
-    const takenKeys = Object.keys(takenMeds);
-    const orphanedKeys = takenKeys.filter((key) => {
-      if (key === "_initialized") return false;
-      return !validDoseKeys.has(key);
-    });
-
-    // Clean up
-    if (orphanedKeys.length > 0) {
-      console.log(
-        "Cleaning up deleted medications from takenMeds:",
-        orphanedKeys,
-      );
-
-      const takenRef = ref(database, `users/${user.uid}/takenMeds/${today}`);
-      const updates = {};
-      orphanedKeys.forEach((key) => {
-        updates[key] = null;
-      });
-
-      update(takenRef, updates);
-
-      setTakenMeds((prev) => {
-        const newTakenMeds = { ...prev };
-        orphanedKeys.forEach((key) => {
-          delete newTakenMeds[key];
-        });
-        return newTakenMeds;
-      });
-    }
-  }, [medications, user, today]); */
-
-  // ─── Add Medication Function ────────────────────────────────────────────────
+  // Add Medication Function
 
   // Function to add a new medication to Firebase
   const saveMedication = async () => {
@@ -1694,7 +1596,7 @@ function Medications({
     setMedNotes("");
   };
 
-  // ─── Delete Medication Function ─────────────────────────────────────────────
+  // Delete Medication Function
 
   // Function to delete a medication
   const deleteMed = async (id) => {
@@ -1716,7 +1618,7 @@ function Medications({
     }
   };
 
-  // ─── Mark as Taken Function ─────────────────────────────────────────────────
+  // Mark as Taken Function
 
   // Function handles individual dose tracking for multi-dose medications
   // ═══ FUNCTION: Mark Medication Dose as Taken ═══
@@ -1725,22 +1627,22 @@ function Medications({
   //   - id: The medication's unique ID
   //   - timeSlot: Which dose (morning, afternoon, evening, single, or asneeded)
   const markTaken = async (id, timeSlot = "single") => {
-    // ═══ STEP 1: Find the medication details ═══
+    // STEP 1: Find the medication details
     // We need the medication object to get its name for voice announcement
     const medication = medications.find((m) => m.id === id);
     const medName = medication?.name || "Medication";
 
-    // ═══ STEP 2: Create unique key for this specific dose ═══
+    // STEP 2: Create unique key for this specific dose
     // Format: medicationId_timeSlot (e.g., "abc123_morning")
     // This allows us to track each dose separately
     const doseKey = `${id}_${timeSlot}`;
 
-    // ═══ STEP 3: Get current status and calculate new status ═══
+    // STEP 3: Get current status and calculate new status
     // Check if this dose is currently marked as taken
     const currentlyTaken = takenMeds[doseKey] || false;
     // Toggle the status (true becomes false, false becomes true)
     const newStatus = !currentlyTaken;
-    // ═══ STEP 4: Create updated taken meds object ═══
+    // STEP 4: Create updated taken meds object
     // We need to include ALL existing taken meds plus the new/updated one
     // Spread operator (...) copies all existing entries
     const newTakenMeds = {
@@ -1751,16 +1653,16 @@ function Medications({
     const takenRef = ref(database, `users/${user.uid}/takenMeds/${today}`);
 
     try {
-      // ═══ STEP 6: Write entire object to Firebase ═══
+      // STEP 6: Write entire object to Firebase
       // Using set() instead of update() ensures the date path is created
       // Reference to today's taken medications in Firebase
       await set(takenRef, newTakenMeds);
 
-      // ═══ STEP 7: Update local state immediately ═══
+      // STEP 7: Update local state immediately
       // This makes the UI update without waiting for Firebase callback
       setTakenMeds(newTakenMeds);
 
-      // ═══ STEP 8: Voice announcement ═══
+      // STEP 8: Voice announcement
       // Get the user-friendly label for this time slot
       const timeSlotName = getTimeSlotLabel(timeSlot, medication);
 
@@ -1778,82 +1680,12 @@ function Medications({
         );
       }
     } catch (error) {
-      // ═══ STEP 8: Error handling ═══
+      // STEP 9: Error handling
       // If anything fails, show an alert to the user
       console.error("Error updating medication:", error);
       alert("Failed to update medication: " + error.message);
     }
   };
-
-  // ═══ FUNCTION: Mark Medication Dose as Taken ═══
-  // This function handles individual dose tracking for multi-dose medications
-  // Parameters:
-  //   - id: The medication's unique ID
-  //   - timeSlot: Which dose (morning, afternoon, evening, single, or asneeded)
-  /*const markTaken = async (id, timeSlot = "single") => {
-    // ═══ STEP 1: Find the medication details ═══
-    // We need the medication object to get its name for voice announcement
-    const medication = medications.find((m) => m.id === id);
-    const medName = medication?.name || "Medication";
-
-    // ═══ STEP 2: Create unique key for this specific dose ═══
-    // Format: medicationId_timeSlot (e.g., "abc123_morning")
-    // This allows us to track each dose separately
-    const doseKey = `${id}_${timeSlot}`;
-
-    // ═══ STEP 3: Get current status and calculate new status ═══
-    // Check if this dose is currently marked as taken
-    const currentlyTaken = takenMeds[doseKey] || false;
-    // Toggle the status (true becomes false, false becomes true)
-    const newStatus = !currentlyTaken;
-
-    // ═══ STEP 4: Create Firebase reference to this specific dose ═══
-    // Instead of writing the entire object, we write to a specific path
-    // Path: users/{userId}/takenMeds/{date}/{doseKey}
-    // This ensures Firebase creates the path automatically
-    const takenRef = ref(
-      database,
-      `users/${user.uid}/takenMeds/${today}/${doseKey}`,
-    );
-
-    try {
-      // ═══ STEP 5: Write the new status to Firebase ═══
-      // Using set() to write directly to the specific dose path
-      // This is more reliable than updating the entire object
-      await set(takenRef, newStatus);
-
-      // ═══ STEP 6: Update local state immediately ═══
-      // Using the functional form of setState to ensure we have the latest state
-      // This prevents race conditions and ensures the UI updates correctly
-      setTakenMeds((prev) => ({
-        ...prev, // Keep all existing taken medications
-        [doseKey]: newStatus, // Update this specific dose
-      }));
-
-      // ═══ STEP 7: Voice announcement ═══
-      // Get the user-friendly label for this time slot
-      const timeSlotName = getTimeSlotLabel(timeSlot, medication);
-
-      if (newStatus) {
-        // Medication was just marked as taken
-        speak(
-          `${medName} ${timeSlot !== "single" && timeSlot !== "asneeded" ? timeSlotName + " dose" : ""} has been marked as successfully taken`,
-          voiceEnabled,
-        );
-      } else {
-        // Medication was just unmarked
-        speak(
-          `${medName} ${timeSlot !== "single" && timeSlot !== "asneeded" ? timeSlotName + " dose" : ""} has been unmarked`,
-          voiceEnabled,
-        );
-      }
-    } catch (error) {
-      // ═══ STEP 8: Error handling ═══
-      // If anything fails, show an alert to the user
-      console.error("Error updating medication:", error);
-      alert("Failed to update medication: " + error.message);
-    }
-  }; */
 
   // Read medication details aloud
   const readMedicationDetails = (med) => {
@@ -2001,7 +1833,7 @@ function Medications({
     }
   };
 
-  // ─── Calculate Progress Statistics
+  // Calculate Progress Statistics
 
   // Calculate total number of doses required today
   let totalDosesRequired = 0;
@@ -2033,11 +1865,11 @@ function Medications({
   // Gets next med info. Will be null if no upcoming doses, or an object with dose info
   const nextMed = getNextMedication();
 
-  // ─── Render Medications UI ──────────────────────────────────────────────────
+  // Render Medications UI
 
   return (
     <div className="page">
-      {/* ═══ PAGE HEADER ═══ */}
+      {/* PAGE HEADER */}
       <div className="page-header-bar">
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           {/* Back button to return to dashboard */}
@@ -2063,7 +1895,7 @@ function Medications({
               const newVoiceState = !voiceEnabled;
               setVoiceEnabled(newVoiceState);
 
-              // ═══ IMMEDIATELY STOP ANY PLAYING SPEECH ═══
+              // IMMEDIATELY STOP ANY PLAYING SPEECH
               if (!newVoiceState) {
                 // If turning voice OFF, immediately stop all speech
                 window.speechSynthesis.cancel();
@@ -2084,8 +1916,7 @@ function Medications({
           <div className="avatar-circle">{user.email[0].toUpperCase()}</div>
         </div>
       </div>
-      {/* ═══ PROGRESS BANNER showing today's medication adherence ═══ */}
-      {/* ═══ PROGRESS BANNER showing today's medication adherence ═══ */}
+      {/* PROGRESS BANNER showing today's medication adherence */}
       <div className="progress-banner">
         {/* Left side showing Progress bar */}
         <div>
@@ -2115,7 +1946,7 @@ function Medications({
             {/* Timer content */}
             <div className="timer-content">
               {dosesTaken === totalDosesRequired ? (
-                // ═══ ALL COMPLETE ═══
+                // ALL COMPLETE
                 <>
                   <div className="timer-label">ALL DONE!</div>
                   <div className="timer-message">
@@ -2123,7 +1954,7 @@ function Medications({
                   </div>
                 </>
               ) : (
-                // ═══ PENDING DOSES ═══
+                // PENDING DOSES
                 <>
                   <div className="timer-label">PENDING DOSES</div>
                   <div className="timer-med-name">
@@ -2131,7 +1962,7 @@ function Medications({
                     {totalDosesRequired - dosesTaken > 1 ? "s" : ""} remaining
                   </div>
 
-                  {/* ═══ SHOW NEXT MEDICATION IF AVAILABLE ═══ */}
+                  {/* SHOW NEXT MEDICATION IF AVAILABLE */}
                   {nextMed && (
                     <div className="timer-next-med">
                       <span className="next-med-label">Next:</span>
@@ -2158,7 +1989,7 @@ function Medications({
           <span>Complete</span>
         </div>
       </div>
-      {/* ═══ MEDICATION SCHEDULE HEADER with Add button ═══ */}
+      {/* MEDICATION SCHEDULE HEADER with Add button */}
       <div
         style={{
           display: "flex",
@@ -2174,7 +2005,7 @@ function Medications({
           + Add Medication
         </button>
       </div>
-      {/* ═══ MEDICATIONS LIST ═══ */}
+      {/* MEDICATIONS LIST */}
       {medications.length === 0 ? (
         // Show empty state if no medications
         <div className="empty-state">
@@ -2196,13 +2027,13 @@ function Medications({
 
             return (
               <div className="med-card" key={med.id}>
-                {/* ─── Card Header with gradient background ─── */}
+                {/* Card Header with gradient background */}
                 <div className="med-card-header">
                   <span className="med-card-icon">💊</span>
                   <span className="med-card-name">{med.name}</span>
                 </div>
 
-                {/* ─── Card Body with medication details ─── */}
+                {/* Card Body with medication details */}
                 <div className="med-card-body">
                   {/* Details row showing frequency, time, and status */}
                   <div className="med-detail-row">
@@ -2237,7 +2068,7 @@ function Medications({
                     </div>
                   </div>
 
-                  {/* ═══ DOSE BUTTONS SECTION ═══ */}
+                  {/* DOSE BUTTONS SECTION */}
                   {/* Show individual button for each dose time */}
                   <div className="dose-buttons-container">
                     {doseTimes.map((slot) => {
@@ -2258,7 +2089,7 @@ function Medications({
 
                       return (
                         <div key={slot} className="dose-button-wrapper">
-                          {/* ═══ TIME SLOT LABEL ═══ */}
+                          {/* TIME SLOT LABEL */}
                           {/* Only show label if multiple doses per day */}
                           {doseTimes.length > 1 && (
                             <div className="dose-time-label">
@@ -2269,7 +2100,7 @@ function Medications({
                             </div>
                           )}
 
-                          {/* ═══ MARK AS TAKEN BUTTON ═══ */}
+                          {/* MARK AS TAKEN BUTTON */}
                           <button
                             className={`mark-taken-btn ${doseTaken ? "already-taken" : ""} ${doseTimes.length > 1 ? "dose-btn" : ""}`}
                             onClick={() => markTaken(med.id, slot)}
@@ -2281,7 +2112,7 @@ function Medications({
                     })}
                   </div>
 
-                  {/* ─── Action Buttons Row ─── */}
+                  {/* Action Buttons Row */}
                   <div
                     className="med-card-actions"
                     style={{
@@ -2319,13 +2150,13 @@ function Medications({
           })}
         </div>
       )}
-      {/* ═══ ADD MEDICATION MODAL ═══ */}
+      {/* ADD MEDICATION MODAL */}
       {showModal && (
         // Modal overlay - clicking it closes the modal
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           {/* Modal content - stop propagation to prevent closing when clicking inside */}
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            {/* ─── Modal Header ─── */}
+            {/* Modal Header */}
             <div className="modal-header">
               <div>
                 {/* Show edit or add based on whether editing */}
@@ -2345,7 +2176,7 @@ function Medications({
               </button>
             </div>
 
-            {/* ─── Modal Body with form fields ─── */}
+            {/* Modal Body with form fields */}
             <div className="modal-body">
               {/* Medication name input */}
               <label className="form-label">Medication Name *</label>
@@ -2488,7 +2319,7 @@ function Medications({
               />
             </div>
 
-            {/* ─── Modal Footer with buttons ─── */}
+            {/* Modal Footer with buttons */}
             <div className="modal-footer">
               <button className="modal-cancel" onClick={closeModal}>
                 Cancel
@@ -2505,14 +2336,11 @@ function Medications({
   );
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
 // FITNESS TRACKER COMPONENT
 // Page for tracking workouts and viewing fitness statistics
 // Shows workout cards, summary stats, and step counter
-// ══════════════════════════════════════════════════════════════════════════════
 
 function FitnessPage({ user, setActivePage }) {
-  // ─── State Variables ────────────────────────────────────────────────────────
 
   // fitness - stores today's fitness data
   const [fitness, setFitness] = useState({
@@ -2535,7 +2363,7 @@ function FitnessPage({ user, setActivePage }) {
   // Get username for display
   const userName = user.email.split("@")[0];
 
-  // ─── Load Fitness Data Effect ───────────────────────────────────────────────
+  // Load Fitness Data Effect
 
   // Load today's fitness data from Firebase when component mounts
   useEffect(() => {
@@ -2550,7 +2378,7 @@ function FitnessPage({ user, setActivePage }) {
     });
   }, [user, today]);
 
-  // ─── Calculate Statistics ───────────────────────────────────────────────────
+  // Calculate Statistics
 
   // Get activities array, default to empty if not available
   const activities = fitness.activities || [];
@@ -2572,7 +2400,7 @@ function FitnessPage({ user, setActivePage }) {
   // Estimate calories burned (5.5 cal per minute is approximate)
   const calories = Math.round(totalMins * 5.5);
 
-  // ─── Add Workout Function ───────────────────────────────────────────────────
+  // Add Workout Function
 
   // Function to add a new workout/activity
   const addWorkout = async () => {
@@ -2603,7 +2431,7 @@ function FitnessPage({ user, setActivePage }) {
     setWorkoutDuration("");
   };
 
-  // ─── Delete Workout Function ────────────────────────────────────────────────
+  // Delete Workout Function
 
   // Function to delete a workout by its array index
   const deleteWorkout = async (index) => {
@@ -2617,7 +2445,7 @@ function FitnessPage({ user, setActivePage }) {
     await update(fitnessRef, { activities: newActivities });
   };
 
-  // ─── Get Workout Icon Helper Function ───────────────────────────────────────
+  // Get Workout Icon Helper Function
 
   // Function to determine which emoji icon to show based on workout name
   const getIcon = (name) => {
@@ -2634,11 +2462,11 @@ function FitnessPage({ user, setActivePage }) {
     return "💪";
   };
 
-  // ─── Render Fitness UI ──────────────────────────────────────────────────────
+  // Render Fitness UI
 
   return (
     <div className="page">
-      {/* ═══ PAGE HEADER ═══ */}
+      {/* PAGE HEADER */}
       <div className="page-header-bar">
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           {/* Back button */}
@@ -2659,7 +2487,7 @@ function FitnessPage({ user, setActivePage }) {
         <span className="header-user">{userName}</span>
       </div>
 
-      {/* ═══ STEPS BANNER with gradient background ═══ */}
+      {/* STEPS BANNER with gradient background */}
       <div className="steps-banner">
         <div>
           <div className="steps-label">TOTAL STEPS TODAY</div>
@@ -2674,7 +2502,7 @@ function FitnessPage({ user, setActivePage }) {
         <div className="steps-icon">👟</div>
       </div>
 
-      {/* ═══ WORKOUTS SECTION HEADER ═══ */}
+      {/* WORKOUTS SECTION HEADER */}
       <div
         style={{
           display: "flex",
@@ -2694,7 +2522,7 @@ function FitnessPage({ user, setActivePage }) {
         </button>
       </div>
 
-      {/* ═══ ADD WORKOUT FORM (conditionally shown) ═══ */}
+      {/* ADD WORKOUT FORM (conditionally shown) */}
       {showAddWorkout && (
         <div className="card-white" style={{ marginBottom: 16 }}>
           <h3 className="section-title">Add Workout</h3>
@@ -2728,7 +2556,7 @@ function FitnessPage({ user, setActivePage }) {
         </div>
       )}
 
-      {/* ═══ WORKOUTS LIST ═══ */}
+      {/* WORKOUTS LIST */}
       {activities.length === 0 ? (
         // Empty state if no workouts
         <div className="empty-state">
@@ -2740,7 +2568,7 @@ function FitnessPage({ user, setActivePage }) {
         <div className="workout-cards-grid">
           {activities.map((activity, index) => (
             <div className="workout-card" key={index}>
-              {/* ─── Workout Card Header ─── */}
+              {/* Workout Card Header */}
               <div className="workout-card-top">
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   {/* Icon based on workout type */}
@@ -2752,7 +2580,7 @@ function FitnessPage({ user, setActivePage }) {
                 </div>
               </div>
 
-              {/* ─── Workout Stats (Count and Duration) ─── */}
+              {/* Workout Stats (Count and Duration) */}
               <div className="workout-stats">
                 {/* Count stat with blue background */}
                 <div className="workout-stat blue-bg">
@@ -2771,10 +2599,10 @@ function FitnessPage({ user, setActivePage }) {
                 </div>
               </div>
 
-              {/* ─── Last Updated ─── */}
+              {/* Last Updated */}
               <div className="workout-last-updated">Last updated: Today</div>
 
-              {/* ─── Action Buttons ─── */}
+              {/* Action Buttons */}
               <div className="workout-actions">
                 <button className="workout-action-btn flex-1">✏️ Edit</button>
                 <button className="workout-action-btn">🕐 History</button>
@@ -2790,7 +2618,7 @@ function FitnessPage({ user, setActivePage }) {
         </div>
       )}
 
-      {/* ═══ SUMMARY STATISTICS ═══ */}
+      {/* SUMMARY STATISTICS */}
       <h2 className="section-title-lg" style={{ marginTop: 32 }}>
         Summary
       </h2>
@@ -2833,7 +2661,6 @@ function FitnessPage({ user, setActivePage }) {
 // User profile page showing personal info, medical data, and account settings
 
 function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
-  // ─── State Variables ────────────────────────────────────────────────────────
 
   // Profile data object containing all user information
   const [profile, setProfile] = useState({
@@ -2853,7 +2680,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
   // Extract username from email
   const userName = user.email.split("@")[0];
 
-  // ─── Read Profile Aloud Function ────────────────────────────────────────────
+  // Read Profile Aloud Function
   const readProfileAloud = () => {
     if (!window.speechSynthesis) {
       alert("Speech synthesis not supported in this browser");
@@ -2930,7 +2757,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
     window.speechSynthesis.speak(utterance);
   };
 
-  // ─── Load Profile Data Effect ───────────────────────────────────────────────
+  // Load Profile Data Effect
 
   // Load user profile from Firebase when component mounts
   useEffect(() => {
@@ -2946,7 +2773,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
     });
   }, [user]);
 
-  // ─── Save Profile Function ──────────────────────────────────────────────────
+  // Save Profile Function
 
   // Function to save profile changes to Firebase
   const saveProfile = async () => {
@@ -2957,7 +2784,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
     setEditing(false);
   };
 
-  // ─── Delete Account Function ────────────────────────────────────────────────
+  // Delete Account Function
 
   // Function to permanently delete user account and all data
   const deleteAccount = async () => {
@@ -2971,18 +2798,18 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
     }
   };
 
-  // ─── Calculate Account Creation Date ───────────────────────────────────────
+  // Calculate Account Creation Date
 
   // Format account creation date as "Feb 2026"
   const createdMonth = new Date(
     user.metadata?.creationTime || Date.now(),
   ).toLocaleDateString("en-GB", { month: "short", year: "numeric" });
 
-  // ─── Render Profile UI ──────────────────────────────────────────────────────
+  // Render Profile UI
 
   return (
     <div className="page">
-      {/* ═══ PAGE HEADER ═══ */}
+      {/* PAGE HEADER */}
       <div className="page-header-bar">
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <button
@@ -3015,7 +2842,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
         </div>
       </div>
 
-      {/* ═══ PROFILE PAGE CONTENT ═══ */}
+      {/* PROFILE PAGE CONTENT */}
       <div className="profile-page">
         {/* ─── AVATAR CARD ─── */}
         <div className="profile-card">
@@ -3028,7 +2855,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
           </div>
         </div>
 
-        {/* ─── PERSONAL INFORMATION CARD ─── */}
+        {/* PERSONAL INFORMATION CARD */}
         <div className="profile-card">
           <h3 className="profile-section-title">Personal Information</h3>
 
@@ -3100,7 +2927,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
           </div>
         </div>
 
-        {/* ─── MEDICAL INFORMATION CARD ─── */}
+        {/* MEDICAL INFORMATION CARD */}
         <div className="profile-card">
           <h3 className="profile-section-title">Medical Information</h3>
 
@@ -3178,7 +3005,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
           </div>
         </div>
 
-        {/* ─── ACCESSIBILITY & PREFERENCES CARD ─── */}
+        {/* ACCESSIBILITY & PREFERENCES CARD */}
         <div className="profile-card">
           <h3 className="profile-section-title">Accessibility & Preferences</h3>
 
@@ -3235,7 +3062,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
           </div>
         </div>
 
-        {/* ─── STATISTICS ROW ─── */}
+        {/* STATISTICS ROW */}
         <div className="profile-stats-row">
           {/* Three stat cards showing account info */}
           {[
@@ -3261,10 +3088,10 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
           ))}
         </div>
 
-        {/* ─── DANGER ZONE (Delete Account) ─── */}
-        <div className="danger-zone">
-          <h3 className="danger-title">Delete Account</h3>
-          <p className="danger-desc">
+        {/* Delete Account */}
+        <div className="delete-account">
+          <h3 className="delete-title">Delete Account</h3>
+          <p className="delete-desc">
             Permanently delete your account, including all health profiles,
             medications, fitness data, and assistant chats. This action cannot
             be undone.
@@ -3284,7 +3111,6 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
 // Page displaying emergency numbers and personal medical contacts
 
 function Emergency({ user, medications, setActivePage, userProfile }) {
-  // ─── State Variables ────────────────────────────────────────────────────────
 
   // Emergency contacts object (in production, this would come from Firebase)
   const [contacts] = useState({
@@ -3301,7 +3127,7 @@ function Emergency({ user, medications, setActivePage, userProfile }) {
   // User profile data for allergies/medical info
   const [profile, setProfile] = useState({});
 
-  // ─── Load Profile Data Effect ───────────────────────────────────────────────
+  // Load Profile Data Effect
 
   // Load user profile to display medical information
   useEffect(() => {
@@ -3313,11 +3139,11 @@ function Emergency({ user, medications, setActivePage, userProfile }) {
     });
   }, [user]);
 
-  // ─── Render Emergency UI ────────────────────────────────────────────────────
+  // Render Emergency UI
 
   return (
     <div className="page">
-      {/* ═══ PAGE HEADER ═══ */}
+      {/* PAGE HEADER */}
       <div className="page-header-bar">
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <button
@@ -3331,9 +3157,9 @@ function Emergency({ user, medications, setActivePage, userProfile }) {
         <button className="voice-outline-btn">🔊 Read</button>
       </div>
 
-      {/* ═══ EMERGENCY PAGE CONTENT ═══ */}
+      {/* EMERGENCY PAGE CONTENT */}
       <div className="emergency-page">
-        {/* ─── EMERGENCY SERVICES SECTION ─── */}
+        {/* EMERGENCY SERVICES SECTION */}
         <h3 className="section-title-lg">Emergency Services</h3>
 
         {/* Row with 999 and 111 cards */}
@@ -3385,7 +3211,7 @@ function Emergency({ user, medications, setActivePage, userProfile }) {
           ))}
         </div>
 
-        {/* ─── PERSONAL CONTACTS SECTION ─── */}
+        {/* PERSONAL CONTACTS SECTION */}
         <h3 className="section-title-lg" style={{ marginTop: 28 }}>
           Personal Contacts
         </h3>
@@ -3439,7 +3265,7 @@ function Emergency({ user, medications, setActivePage, userProfile }) {
           ))}
         </div>
 
-        {/* ─── MEDICAL INFORMATION CARD ─── */}
+        {/* MEDICAL INFORMATION CARD */}
         <div className="card-white" style={{ marginTop: 24 }}>
           <h3 className="section-title">🛡️ Medical Information</h3>
 
@@ -3480,7 +3306,7 @@ function Settings({
   highContrastEnabled,
   setHighContrastEnabled,
 }) {
-  // ─── State Variables ────────────────────────────────────────────────────────
+  // State Variables
 
   // Settings object containing all toggle states
   const [settings, setSettings] = useState({
@@ -3491,7 +3317,7 @@ function Settings({
     voiceCommands: true,
   });
 
-  // ─── Toggle Function ────────────────────────────────────────────────────────
+  // Toggle Function
 
   // Function to toggle a setting on/off
   // key parameter is the setting name (e.g. 'pushNotifications')
@@ -3517,7 +3343,7 @@ function Settings({
     return settings[key];
   };
 
-  // ─── Toggle Switch Component ────────────────────────────────────────────────
+  // Toggle Switch Component
 
   // Reusable component for the toggle switch UI
   // on: whether toggle is on or off
@@ -3541,7 +3367,7 @@ function Settings({
     </div>
   );
 
-  // ─── Settings Configuration Array ───────────────────────────────────────────
+  // Settings Configuration Array
 
   // Array defining all settings sections and their items
   const settingsList = [
@@ -3599,7 +3425,7 @@ function Settings({
     },
   ];
 
-  // ─── Render Settings UI ─────────────────────────────────────────────────────
+  // Render Settings UI
 
   return (
     <div className="page">
@@ -3616,7 +3442,7 @@ function Settings({
         </div>
       </div>
 
-      {/* ═══ SETTINGS PAGE CONTENT ═══ */}
+      {/* SETTINGS PAGE CONTENT */}
       <div className="settings-page">
         {/* Loop through each settings section */}
         {settingsList.map((group, groupIndex) => (
@@ -3647,7 +3473,7 @@ function Settings({
           </div>
         ))}
 
-        {/* ─── ACCOUNT SECTION ─── */}
+        {/* ACCOUNT SECTION */}
         <div className="settings-card">
           <h3 className="settings-section-title">Account</h3>
 
@@ -3886,7 +3712,6 @@ function NotificationManager({ user, medications, reminders }) {
 // Root component that manages authentication and routing between pages
 
 export default function App() {
-  // ─── State Variables ────────────────────────────────────────────────────────
 
   // user - the currently logged-in user (null if not logged in)
   const [user, setUser] = useState(null);
@@ -3915,7 +3740,7 @@ export default function App() {
   // High contrast mode for accessibility
   const [highContrastEnabled, setHighContrastEnabled] = useState(false);
 
-  // ─── Authentication Listener Effect ─────────────────────────────────────────
+  // Authentication Listener Effect
 
   // Listen for authentication state changes (login/logout)
   // This effect runs once when the app starts
@@ -3934,7 +3759,7 @@ export default function App() {
     return () => unsubscribe();
   }, []); // Empty dependency array = run once on mount
 
-  // ─── Load Medications Effect ────────────────────────────────────────────────
+  // Load Medications Effect
 
   // Load all medications for the current user
   useEffect(() => {
@@ -4012,7 +3837,7 @@ export default function App() {
     });
   }, [user]);
 
-  // ─── Loading State ──────────────────────────────────────────────────────────
+  // Loading State
 
   // While checking authentication, show loading message
   if (loading) {
@@ -4032,7 +3857,7 @@ export default function App() {
     );
   }
 
-  // ─── Not Logged In State ────────────────────────────────────────────────────
+  // Not Logged In State
 
   // If no user is logged in, show the login/signup page
   if (!user) {

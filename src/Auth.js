@@ -1,28 +1,14 @@
-// ══════════════════════════════════════════════════════════════════════════════
-// AUTH COMPONENT - Login and Signup Page
-// This component handles user authentication (logging in and signing up)
-// It's shown when the user is not logged in
-// ══════════════════════════════════════════════════════════════════════════════
-
 // Import React and the useState hook for managing component state
 import React, { useState } from "react";
 
 // Import Firebase authentication functions
-import { auth } from "./firebase"; // Our Firebase configuration
+import { auth } from "./firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Auth Component Function
-// Props:
-//   - user: the currently logged-in user (should be null when this renders)
-//   - setUser: function to update the user state in the parent component
-// ──────────────────────────────────────────────────────────────────────────────
-
 function Auth({ user, setUser }) {
-  // ═══ STATE VARIABLES ═══════════════════════════════════════════════════════
 
   // email - stores the email address entered by the user
   const [email, setEmail] = useState("");
@@ -42,7 +28,7 @@ function Auth({ user, setUser }) {
   // true = show loading state, false = normal state
   const [loading, setLoading] = useState(false);
 
-  // ═══ HANDLE AUTHENTICATION FUNCTION ════════════════════════════════════════
+  // Handle Authentication Function
 
   // This function is called when the user submits the login/signup form
   // It handles both creating a new account and logging into an existing account
@@ -123,14 +109,14 @@ function Auth({ user, setUser }) {
     }
   };
 
-  // ═══ RENDER AUTH PAGE UI ═══════════════════════════════════════════════════
+  // Render Auth Page UI 
 
   return (
     // Outer container with centered layout
     <div className="auth-page">
       {/* Card containing the login/signup form */}
       <div className="auth-card">
-        {/* ─── HEADER SECTION ─── */}
+        {/* Header section */}
 
         {/* App logo/icon */}
         <div className="auth-logo">🏥</div>
@@ -147,16 +133,14 @@ function Auth({ user, setUser }) {
           }
         </p>
 
-        {/* ─── ERROR MESSAGE DISPLAY ─── */}
-
         {/* Only show error box if there's an error message */}
         {error && <div className="auth-error">⚠️ {error}</div>}
 
-        {/* ─── AUTHENTICATION FORM ─── */}
+        {/* Authentication form */}
 
         {/* Form element - calls handleAuth when submitted */}
         <form onSubmit={handleAuth}>
-          {/* EMAIL FIELD */}
+          {/* Email field */}
           <div className="auth-field">
             <label className="auth-label">Email Address</label>
             <input
@@ -169,7 +153,7 @@ function Auth({ user, setUser }) {
             />
           </div>
 
-          {/* PASSWORD FIELD */}
+          {/* Password field */}
           <div className="auth-field">
             <label className="auth-label">Password</label>
             <input
@@ -182,7 +166,7 @@ function Auth({ user, setUser }) {
             />
           </div>
 
-          {/* SUBMIT BUTTON */}
+          {/* Submit button */}
           <button
             type="submit"
             className="auth-submit"
@@ -199,7 +183,7 @@ function Auth({ user, setUser }) {
           </button>
         </form>
 
-        {/* ─── TOGGLE BETWEEN LOGIN AND SIGNUP ─── */}
+        {/* Toggle between Login and Signup */}
 
         {/* Links to switch between login and signup modes */}
         <div className="auth-toggle">
@@ -230,5 +214,4 @@ function Auth({ user, setUser }) {
   );
 }
 
-// Export the component so it can be imported in App.js
 export default Auth;
