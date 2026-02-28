@@ -1,3 +1,4 @@
+// React and hooks - the foundation of our React app
 import React, { useState, useEffect } from "react";
 
 import "./App.css";
@@ -23,10 +24,12 @@ import {
   showNotification,
   scheduleNotification,
 } from "./Notifications";
+import { type } from "firebase/firestore/pipelines";
 
-// Voice Assistant Function
+// VOICE ASSISTANT UTILITY FUNCTION
 // This function converts text to speech using the Web Speech API
 // Built into all modern browsers - no libraries needed!
+
 const speak = (text, isEnabled) => {
   // If voice is disabled, don't speak
   if (!isEnabled) return;
@@ -132,7 +135,7 @@ function Measurements({ user, setActivePage }) {
     });
   }, [user]);
 
-   // loads today's measurements if already logged
+  // loads today's measurements if already logged
   // pre-fills form with existing values
   useEffect(() => {
     if (!user) return;
@@ -782,15 +785,13 @@ function Measurements({ user, setActivePage }) {
       )}
     </div>
   );
-
 }
 
-// Dashboard Component
+// DASHBOARD COMPONENT
 // This is the main home page users see when they log in
 // Shows overview of health stats, water intake, charts, and quick action buttons
 
 function Dashboard({ user, medications, setActivePage }) {
-  // State Variables
 
   // fitness - stores today's fitness data (steps, water, activities)
   const [fitness, setFitness] = useState(null);
@@ -865,7 +866,7 @@ function Dashboard({ user, medications, setActivePage }) {
   }, [user]);
 
   // Load Taken Medications Effect
-  
+
   // Load which medications have been marked as taken today
   // This is the SAME data used in the Medications page
   useEffect(() => {
@@ -995,7 +996,7 @@ function Dashboard({ user, medications, setActivePage }) {
   const mockSteps = [0, 0, 0, 0, 0, 0, steps || 0];
   const maxSteps = Math.max(...mockSteps, 1);
 
-  // Calculate donut chart values
+  //Calculate donut chart values
 
   // SVG circle circumference calculation
   // For a circle with radius 35, circumference = 2 * π * r = 2 * 3.14159 * 35 ≈ 220
@@ -1154,7 +1155,7 @@ function Dashboard({ user, medications, setActivePage }) {
 
       {/* CHARTS ROW (2 charts side by side) */}
       <div className="charts-row">
-        {/* ─── WEEKLY STEPS BAR CHART ─── */}
+        {/* WEEKLY STEPS BAR CHART */}
         <div className="card-white chart-card">
           <h3 className="section-title">Weekly Steps</h3>
 
@@ -1257,6 +1258,12 @@ function Dashboard({ user, medications, setActivePage }) {
             </span>
           </div>
         </div>
+        {/*
+        A full orange circle represents all medications. A green overlay circle shows the portion taken,
+        controlled by strokeDasharray and rotated −90° to start at the top. 
+        The circle is always complete with no gaps: 0% = all orange, 50% = half green/orange,
+        100% = all green. On hover, tooltips display taken or pending counts in the center.
+        */}
       </div>
 
       {/* QUICK ACTIONS GRID */}
@@ -1326,6 +1333,11 @@ function Dashboard({ user, medications, setActivePage }) {
   );
 }
 
+
+// MEDICATIONS COMPONENT
+// Page for viewing, adding, editing, and marking medications as taken
+// Shows gradient cards for each medication with status tracking
+
 function Medications({
   user,
   medications,
@@ -1333,8 +1345,6 @@ function Medications({
   voiceEnabled,
   setVoiceEnabled,
 }) {
-  // State Variables
-
   // track current Time
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -1487,55 +1497,6 @@ function Medications({
     return () => unsubscribe();
   }, [user, today]);
 
-  // Clean up takenMeds when medications change
-  // This effect runs whenever the medications array changes
-  // It removes any takenMeds entries for medications that no longer exist
-  /*useEffect(() => {
-    if (!user || !medications.length || !Object.keys(takenMeds).length) return;
-
-    // Build a set of all valid dose keys
-    const validDoseKeys = new Set();
-
-    medications.forEach((med) => {
-      const doseTimes = getDoseTimes(med.frequency);
-      doseTimes.forEach((slot) => {
-        const doseKey = `${med.id}_${slot}`;
-        validDoseKeys.add(doseKey);
-      });
-    });
-
-    // Find dose keys that don't match any current medication
-    const takenKeys = Object.keys(takenMeds);
-    const orphanedKeys = takenKeys.filter((key) => {
-      if (key === "_initialized") return false;
-      return !validDoseKeys.has(key);
-    });
-
-    // Clean up
-    if (orphanedKeys.length > 0) {
-      console.log(
-        "Cleaning up deleted medications from takenMeds:",
-        orphanedKeys,
-      );
-
-      const takenRef = ref(database, `users/${user.uid}/takenMeds/${today}`);
-      const updates = {};
-      orphanedKeys.forEach((key) => {
-        updates[key] = null;
-      });
-
-      update(takenRef, updates);
-
-      setTakenMeds((prev) => {
-        const newTakenMeds = { ...prev };
-        orphanedKeys.forEach((key) => {
-          delete newTakenMeds[key];
-        });
-        return newTakenMeds;
-      });
-    }
-  }, [medications, user, today]); */
-
   // Add Medication Function
 
   // Function to add a new medication to Firebase
@@ -1657,10 +1618,10 @@ function Medications({
     }
   };
 
-  // Mark as Taken Function 
+  // Mark as Taken Function
 
   // Function handles individual dose tracking for multi-dose medications
-  // FUNCTION: Mark Medication Dose as Taken
+  // ═══ FUNCTION: Mark Medication Dose as Taken ═══
   // This function handles individual dose tracking for multi-dose medications
   // Parameters:
   //   - id: The medication's unique ID
@@ -1719,7 +1680,7 @@ function Medications({
         );
       }
     } catch (error) {
-      // ═══ STEP 8: Error handling ═══
+      // STEP 9: Error handling
       // If anything fails, show an alert to the user
       console.error("Error updating medication:", error);
       alert("Failed to update medication: " + error.message);
@@ -1872,7 +1833,7 @@ function Medications({
     }
   };
 
-  // ─── Calculate Progress Statistics
+  // Calculate Progress Statistics
 
   // Calculate total number of doses required today
   let totalDosesRequired = 0;
@@ -1956,7 +1917,6 @@ function Medications({
         </div>
       </div>
       {/* PROGRESS BANNER showing today's medication adherence */}
-      {/* PROGRESS BANNER showing today's medication adherence */}
       <div className="progress-banner">
         {/* Left side showing Progress bar */}
         <div>
@@ -1986,7 +1946,7 @@ function Medications({
             {/* Timer content */}
             <div className="timer-content">
               {dosesTaken === totalDosesRequired ? (
-                // ALL COMPLETE 
+                // ALL COMPLETE
                 <>
                   <div className="timer-label">ALL DONE!</div>
                   <div className="timer-message">
@@ -2196,7 +2156,7 @@ function Medications({
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           {/* Modal content - stop propagation to prevent closing when clicking inside */}
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            {/* ─── Modal Header ─── */}
+            {/* Modal Header */}
             <div className="modal-header">
               <div>
                 {/* Show edit or add based on whether editing */}
@@ -2376,8 +2336,10 @@ function Medications({
   );
 }
 
+// FITNESS TRACKER COMPONENT
 // Page for tracking workouts and viewing fitness statistics
 // Shows workout cards, summary stats, and step counter
+
 function FitnessPage({ user, setActivePage }) {
 
   // fitness - stores today's fitness data
@@ -2697,10 +2659,8 @@ function FitnessPage({ user, setActivePage }) {
 
 // HEALTH PROFILE COMPONENT
 // User profile page showing personal info, medical data, and account settings
-// ══════════════════════════════════════════════════════════════════════════════
 
 function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
-  // ─── State Variables ────────────────────────────────────────────────────────
 
   // Profile data object containing all user information
   const [profile, setProfile] = useState({
@@ -2720,7 +2680,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
   // Extract username from email
   const userName = user.email.split("@")[0];
 
-  // ─── Read Profile Aloud Function ────────────────────────────────────────────
+  // Read Profile Aloud Function
   const readProfileAloud = () => {
     if (!window.speechSynthesis) {
       alert("Speech synthesis not supported in this browser");
@@ -2797,7 +2757,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
     window.speechSynthesis.speak(utterance);
   };
 
-  // ─── Load Profile Data Effect ───────────────────────────────────────────────
+  // Load Profile Data Effect
 
   // Load user profile from Firebase when component mounts
   useEffect(() => {
@@ -2813,7 +2773,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
     });
   }, [user]);
 
-  // ─── Save Profile Function ──────────────────────────────────────────────────
+  // Save Profile Function
 
   // Function to save profile changes to Firebase
   const saveProfile = async () => {
@@ -2824,7 +2784,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
     setEditing(false);
   };
 
-  // ─── Delete Account Function ────────────────────────────────────────────────
+  // Delete Account Function
 
   // Function to permanently delete user account and all data
   const deleteAccount = async () => {
@@ -2838,18 +2798,18 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
     }
   };
 
-  // ─── Calculate Account Creation Date ───────────────────────────────────────
+  // Calculate Account Creation Date
 
   // Format account creation date as "Feb 2026"
   const createdMonth = new Date(
     user.metadata?.creationTime || Date.now(),
   ).toLocaleDateString("en-GB", { month: "short", year: "numeric" });
 
-  // ─── Render Profile UI ──────────────────────────────────────────────────────
+  // Render Profile UI
 
   return (
     <div className="page">
-      {/* ═══ PAGE HEADER ═══ */}
+      {/* PAGE HEADER */}
       <div className="page-header-bar">
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <button
@@ -2882,7 +2842,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
         </div>
       </div>
 
-      {/* ═══ PROFILE PAGE CONTENT ═══ */}
+      {/* PROFILE PAGE CONTENT */}
       <div className="profile-page">
         {/* ─── AVATAR CARD ─── */}
         <div className="profile-card">
@@ -2895,7 +2855,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
           </div>
         </div>
 
-        {/* ─── PERSONAL INFORMATION CARD ─── */}
+        {/* PERSONAL INFORMATION CARD */}
         <div className="profile-card">
           <h3 className="profile-section-title">Personal Information</h3>
 
@@ -2967,7 +2927,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
           </div>
         </div>
 
-        {/* ─── MEDICAL INFORMATION CARD ─── */}
+        {/* MEDICAL INFORMATION CARD */}
         <div className="profile-card">
           <h3 className="profile-section-title">Medical Information</h3>
 
@@ -3045,7 +3005,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
           </div>
         </div>
 
-        {/* ─── ACCESSIBILITY & PREFERENCES CARD ─── */}
+        {/* ACCESSIBILITY & PREFERENCES CARD */}
         <div className="profile-card">
           <h3 className="profile-section-title">Accessibility & Preferences</h3>
 
@@ -3102,7 +3062,7 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
           </div>
         </div>
 
-        {/* ─── STATISTICS ROW ─── */}
+        {/* STATISTICS ROW */}
         <div className="profile-stats-row">
           {/* Three stat cards showing account info */}
           {[
@@ -3128,10 +3088,10 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
           ))}
         </div>
 
-        {/* ─── DANGER ZONE (Delete Account) ─── */}
-        <div className="danger-zone">
-          <h3 className="danger-title">Delete Account</h3>
-          <p className="danger-desc">
+        {/* Delete Account */}
+        <div className="delete-account">
+          <h3 className="delete-title">Delete Account</h3>
+          <p className="delete-desc">
             Permanently delete your account, including all health profiles,
             medications, fitness data, and assistant chats. This action cannot
             be undone.
@@ -3147,23 +3107,631 @@ function HealthProfile({ user, medications, setActivePage, voiceEnabled }) {
   );
 }
 
+// EMERGENCY CONTACTS COMPONENT
+// Page displaying emergency numbers and personal medical contacts
+
+function Emergency({ user, medications, setActivePage, userProfile }) {
+
+  // Emergency contacts object (in production, this would come from Firebase)
+  const [contacts] = useState({
+    gp: { name: "Dr. Smith", phone: "+44 20 1234 5678" },
+    pharmacy: { name: "Local Pharmacy", phone: "+44 20 8765 4321" },
+  });
+
+  // Get emergency contact from user profile
+  const emergencyContact = {
+    name: userProfile?.emergencyContact || "Not set",
+    phone: userProfile?.emergencyContactPhone || "",
+  };
+
+  // User profile data for allergies/medical info
+  const [profile, setProfile] = useState({});
+
+  // Load Profile Data Effect
+
+  // Load user profile to display medical information
+  useEffect(() => {
+    if (!user) return;
+
+    const profileRef = ref(database, `users/${user.uid}/profile`);
+    onValue(profileRef, (snapshot) => {
+      if (snapshot.val()) setProfile(snapshot.val());
+    });
+  }, [user]);
+
+  // Render Emergency UI
+
+  return (
+    <div className="page">
+      {/* PAGE HEADER */}
+      <div className="page-header-bar">
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <button
+            className="back-btn"
+            onClick={() => setActivePage("dashboard")}
+          >
+            ←
+          </button>
+          <h1 className="page-title-main">Emergency Contacts</h1>
+        </div>
+        <button className="voice-outline-btn">🔊 Read</button>
+      </div>
+
+      {/* EMERGENCY PAGE CONTENT */}
+      <div className="emergency-page">
+        {/* EMERGENCY SERVICES SECTION */}
+        <h3 className="section-title-lg">Emergency Services</h3>
+
+        {/* Row with 999 and 111 cards */}
+        <div className="emergency-services-row">
+          {[
+            {
+              icon: "🚨",
+              label: "Emergency Services",
+              number: "999",
+              color: "#ef4444",
+              bg: "#fef2f2",
+            },
+            {
+              icon: "📋",
+              label: "NHS Non-Emergency",
+              number: "111",
+              color: "#1e293b",
+              bg: "#f8fafc",
+            },
+          ].map((service, index) => (
+            // Clickable link that dials the number when tapped (on mobile)
+            <a
+              href={`tel:${service.number}`}
+              className="emergency-service-card"
+              key={index}
+              style={{ background: service.bg }}
+            >
+              {/* Icon circle */}
+              <div
+                className="emergency-icon-circle"
+                style={{
+                  background: service.bg,
+                  border: `2px solid ${service.color}20`,
+                }}
+              >
+                <span style={{ fontSize: 28 }}>{service.icon}</span>
+              </div>
+
+              {/* Service details */}
+              <div className="emergency-service-label">{service.label}</div>
+              <div
+                className="emergency-number"
+                style={{ color: service.color }}
+              >
+                {service.number}
+              </div>
+              <div className="emergency-tap">Tap to Call</div>
+            </a>
+          ))}
+        </div>
+
+        {/* PERSONAL CONTACTS SECTION */}
+        <h3 className="section-title-lg" style={{ marginTop: 28 }}>
+          Personal Contacts
+        </h3>
+
+        {/* Grid of personal emergency contacts */}
+        <div className="personal-contacts-grid">
+          {[
+            {
+              type: "Emergency Contact",
+              icon: "🆘",
+              name: emergencyContact.name,
+              phone: emergencyContact.phone,
+              hasPhone: !!emergencyContact.phone,
+            },
+
+            {
+              type: "GENERAL PRACTITIONER",
+              icon: "🩺",
+              name: contacts.gp.name,
+              phone: contacts.gp.phone,
+            },
+            {
+              type: "PHARMACY",
+              icon: "💊",
+              name: contacts.pharmacy.name,
+              phone: contacts.pharmacy.phone,
+            },
+          ].map((contact, index) => (
+            <div className="personal-contact-card" key={index}>
+              {/* Contact avatar */}
+              <div className="contact-avatar">{contact.icon}</div>
+
+              {/* Contact info */}
+              <div className="contact-info">
+                <div className="contact-type">{contact.type}</div>
+                <div className="contact-name">{contact.name}</div>
+                <div className="contact-phone">
+                  {contact.phone || "No number set"}
+                </div>
+              </div>
+
+              {/* Call button (only works on mobile and if number exists) */}
+              {contact.hasPhone && contact.phone ? (
+                <a href={`tel:${contact.phone}`} className="contact-call-btn">
+                  📞
+                </a>
+              ) : (
+                <span className="contact-call-btn disabled">📞</span>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* MEDICAL INFORMATION CARD */}
+        <div className="card-white" style={{ marginTop: 24 }}>
+          <h3 className="section-title">🛡️ Medical Information</h3>
+
+          {/* Grid showing allergies and current medications */}
+          <div className="med-info-grid">
+            {/* Allergies */}
+            <div>
+              <div className="med-info-label">ALLERGIES</div>
+              <div className="med-info-value">
+                {profile.allergies || "None reported"}
+              </div>
+            </div>
+
+            {/* Current Medications */}
+            <div>
+              <div className="med-info-label">CURRENT MEDICATIONS</div>
+              <ul className="profile-list">
+                {medications.map((med) => (
+                  <li key={med.id}>{med.name}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// SETTINGS COMPONENT
+// App settings page with toggles and account management options
+
+function Settings({
+  user,
+  setActivePage,
+  largeTextEnabled,
+  setLargeTextEnabled,
+  highContrastEnabled,
+  setHighContrastEnabled,
+}) {
+  // State Variables
+
+  // Settings object containing all toggle states
+  const [settings, setSettings] = useState({
+    pushNotifications: true,
+    soundAlerts: true,
+    medReminders: true,
+    fitnessReminders: true,
+    voiceCommands: true,
+  });
+
+  // Toggle Function
+
+  // Function to toggle a setting on/off
+  // key parameter is the setting name (e.g. 'pushNotifications')
+  const toggle = (key) => {
+    // Handle largeText
+    if (key === "largeText") {
+      setLargeTextEnabled(!largeTextEnabled);
+    } else if (key === "highContrast") {
+      setHighContrastEnabled(!highContrastEnabled);
+    } else {
+      setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
+    }
+  };
+
+  // get setting value
+  const getSettingValue = (key) => {
+    if (key === "largeText") {
+      return largeTextEnabled;
+    }
+    if (key === "highContrast") {
+      return highContrastEnabled;
+    }
+    return settings[key];
+  };
+
+  // Toggle Switch Component
+
+  // Reusable component for the toggle switch UI
+  // on: whether toggle is on or off
+  // onToggle: function to call when clicked
+  const ToggleSwitch = ({ on, onToggle, label }) => (
+    <div
+      className={`toggle-switch ${on ? "on" : ""}`}
+      onClick={onToggle}
+      role="switch"
+      aria-checked={on}
+      aria-label={label}
+      tabIndex="0"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onToggle();
+        }
+      }}
+    >
+      <div className="toggle-thumb"></div>
+    </div>
+  );
+
+  // Settings Configuration Array
+
+  // Array defining all settings sections and their items
+  const settingsList = [
+    {
+      section: "Notifications & Alerts",
+      items: [
+        {
+          key: "pushNotifications",
+          icon: "🔔",
+          label: "Push Notifications",
+          desc: "Receive notifications for medication reminders",
+        },
+        {
+          key: "soundAlerts",
+          icon: "🔊",
+          label: "Sound Alerts",
+          desc: "Play sound for important reminders",
+        },
+        {
+          key: "medReminders",
+          icon: "💊",
+          label: "Medication Reminders",
+          desc: "Get reminded to take your medications",
+        },
+        {
+          key: "fitnessReminders",
+          icon: "🏋️",
+          label: "Fitness Reminders",
+          desc: "Get reminded about daily exercise goals",
+        },
+      ],
+    },
+    {
+      section: "Accessibility",
+      items: [
+        {
+          key: "voiceCommands",
+          icon: "🎤",
+          label: "Voice Commands",
+          desc: "Enable voice control for hands-free operation",
+        },
+        {
+          key: "largeText",
+          icon: "T",
+          label: "Large Text",
+          desc: "Increase text size throughout the app",
+        },
+        {
+          key: "highContrast",
+          icon: "◐",
+          label: "High Contrast",
+          desc: "Increase color contrast for better visibility",
+        },
+      ],
+    },
+  ];
+
+  // Render Settings UI
+
+  return (
+    <div className="page">
+      {/* ═══ PAGE HEADER ═══ */}
+      <div className="page-header-bar">
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <button
+            className="back-btn"
+            onClick={() => setActivePage("dashboard")}
+          >
+            ←
+          </button>
+          <h1 className="page-title-main">⚙️ Settings</h1>
+        </div>
+      </div>
+
+      {/* SETTINGS PAGE CONTENT */}
+      <div className="settings-page">
+        {/* Loop through each settings section */}
+        {settingsList.map((group, groupIndex) => (
+          <div className="settings-card" key={groupIndex}>
+            {/* Section title */}
+            <h3 className="settings-section-title">{group.section}</h3>
+
+            {/* Loop through each item in this section */}
+            {group.items.map((item, itemIndex) => (
+              <div className="settings-item" key={itemIndex}>
+                {/* Left side: icon and labels */}
+                <div className="settings-item-left">
+                  <div className="settings-icon">{item.icon}</div>
+                  <div>
+                    <div className="settings-label">{item.label}</div>
+                    <div className="settings-desc">{item.desc}</div>
+                  </div>
+                </div>
+
+                {/* Right side: toggle switch */}
+                <ToggleSwitch
+                  on={getSettingValue(item.key)}
+                  onToggle={() => toggle(item.key)}
+                  label={item.label}
+                />
+              </div>
+            ))}
+          </div>
+        ))}
+
+        {/* ACCOUNT SECTION */}
+        <div className="settings-card">
+          <h3 className="settings-section-title">Account</h3>
+
+          {/* Account action buttons */}
+          <button
+            className="settings-account-btn dark"
+            onClick={() => setActivePage("profile")}
+          >
+            👤 Update Profile
+          </button>
+
+          <button className="settings-account-btn green-outline">
+            📷 Update Picture
+          </button>
+
+          <button
+            className="settings-account-btn green-outline"
+            onClick={() => setActivePage("medications")}
+          >
+            💊 Manage Medicines
+          </button>
+
+          <button
+            className="settings-account-btn green-outline"
+            onClick={async () => {
+              console.log("test button clicked");
+              console.log("Current permission", Notification.permission);
+
+              if (Notification.permission !== "granted") {
+                console.log("❌ No permission, requesting...");
+                const granted = await requestNotificationPermission();
+                if (!granted) {
+                  alert("Please enable notifications in your browser settings");
+                  return;
+                }
+              }
+
+              console.log("✅ Showing test notification");
+              const notification = showNotification("Test Notification 🧪", {
+                body: "This is a test notification from your Health App! If you see this, notifications are working! 🎉",
+                tag: "test",
+              });
+
+              if (notification) {
+                console.log("✅ Notification shown successfully");
+                alert(
+                  "Notification sent! Check your browser for the notification.",
+                );
+              } else {
+                console.log("❌ Failed to show notification");
+                alert("Failed to show notification. Check console for errors.");
+              }
+            }}
+          >
+            🔔 Test Notification
+          </button>
+
+          {/* Sign Out button */}
+          <button
+            className="settings-account-btn red"
+            onClick={() => signOut(auth)}
+          >
+            🗑️ Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NotificationManager({ user, medications, reminders }) {
+  // tracks whether user has granted notification permission
+  // starts with current permission state from browser
+  const [notificationPermission, setNotificationPermission] = useState(
+    typeof Notification !== "undefined" ? Notification.permission : "defined",
+  );
+
+  // stores all active notification timers so we can cancel them later
+  const [scheduledNotifications, setScheduledNotifications] = useState([]);
+
+  // runs once when component first loads
+  // asks user for notification permission
+  useEffect(() => {
+    const requestPermission = async () => {
+      const granted = await requestNotificationPermission();
+      setNotificationPermission(granted ? "granted" : Notification.permission);
+    };
+    requestPermission();
+  }, []);
+
+  useEffect(() => {
+    console.log("Permission changed to:", notificationPermission);
+  }, [notificationPermission]);
+
+  // schedules notifications for all medications
+  // runs whenever medications change or permission is granted
+  useEffect(() => {
+    // only run if we have permission and medications exist
+    if (notificationPermission !== "granted" || !medications.length) return;
+
+    // cancel all existing scheduled notifications first
+    // prevents duplicate notifications
+    scheduledNotifications.forEach((timeout) => clearTimeout(timeout));
+    const newScheduled = [];
+
+    // loop through each medication
+    medications.forEach((med) => {
+      const frequency = med.frequency?.toLowerCase() || "";
+      let times = [];
+
+      // determine how many times per day based on frequency
+      if (frequency.includes("three times")) {
+        // three times = morning, afternoon, evening
+        times = [
+          { slot: "morning", time: "08:00" },
+          { slot: "afternoon", time: "14:00" },
+          { slot: "evening", time: "18:00" },
+        ];
+      } else if (frequency.includes("twice")) {
+        // twice daily = morning and evening
+        times = [
+          { slot: "morning", time: "08:00" },
+          { slot: "evening", time: "18:00" },
+        ];
+      } else {
+        // once daily = use the time set by user
+        times = [{ slot: "single", time: med.time || "08:00" }];
+      }
+
+      // schedule a notification for each dose time
+      times.forEach(({ time }) => {
+        const timeout = scheduleNotification(
+          `💊 Medication Reminder`,
+          `Time to take ${med.name} (${med.dosage})`,
+          time,
+        );
+        newScheduled.push(timeout);
+      });
+    });
+
+    // save all the new timers
+    setScheduledNotifications(newScheduled);
+
+    // cleanup function: cancel all timers when component unmounts
+    // or when medications change
+    return () => {
+      newScheduled.forEach((timeout) => clearTimeout(timeout));
+    };
+  }, [medications, notificationPermission]);
+
+  // schedules notifications for custom reminders
+  // runs whenever reminders change or permission is granted
+  useEffect(() => {
+    if (notificationPermission !== "granted" || !reminders.length) return;
+
+    const newScheduled = [];
+
+    // figure out what day of week it is
+    const today = new Date().getDay(); // 0=Sunday, 1=Monday, etc.
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const todayName = dayNames[today];
+
+    // loop through all reminders
+    reminders.forEach((reminder) => {
+      // skip if reminder is turned off
+      if (!reminder.enabled) return;
+
+      // skip if reminder is not scheduled for today
+      if (!reminder.days.includes(todayName)) return;
+
+      // choose icon based on reminder type
+      const icon = reminder.type === "measurement" ? "📊" : "💊";
+
+      // schedule the notification
+      const timeout = scheduleNotification(
+        `${icon} ${reminder.type === "measurement" ? "Measurement" : "Medication"} Reminder`,
+        reminder.title,
+        reminder.time,
+      );
+      newScheduled.push(timeout);
+    });
+
+    // add these new timers to the existing ones
+    setScheduledNotifications((prev) => [...prev, ...newScheduled]);
+
+    // cleanup function
+    return () => {
+      newScheduled.forEach((timeout) => clearTimeout(timeout));
+    };
+  }, [reminders, notificationPermission]);
+
+  // if user hasn't granted or denied permission yet, show banner
+  if (notificationPermission === "default") {
+    return (
+      <div className="notification-permission-banner">
+        <div className="permission-content">
+          <span className="permission-icon">🔔</span>
+          <div>
+            <div className="permission-title">Enable Notifications</div>
+            <div className="permission-subtitle">
+              Get reminders for your medications and measurements
+            </div>
+          </div>
+        </div>
+        <button
+          className="permission-btn"
+          onClick={async () => {
+            // when user clicks, request permission
+            const granted = await requestNotificationPermission();
+            setNotificationPermission(
+              granted ? "granted" : Notification.permission,
+            );
+
+            if (granted) {
+              // show a test notification
+              setTimeout(() => {
+                showNotification("Notifications Enabled! 🎉", {
+                  body: "You'll now receive medication reminders",
+                  tag: "welcome",
+                });
+              }, 500);
+            }
+          }}
+        >
+          Enable
+        </button>
+      </div>
+    );
+  }
+
+  // if permission is granted or denied, don't show anything
+  return null;
+}
+
+// MAIN APP COMPONENT
+// Root component that manages authentication and routing between pages
+
 export default function App() {
 
   // user - the currently logged-in user (null if not logged in)
   const [user, setUser] = useState(null);
 
-  // checking authentication status
+  // loading - whether we're checking authentication status
   const [loading, setLoading] = useState(true);
 
-  // array of all medications for the current user
+  // medications - array of all medications for the current user
   const [medications, setMedications] = useState([]);
 
   const [reminders, setReminders] = useState([]);
 
-  // chooses which page to show (dashboard, medications, ...)
+  // User profile data (for emergency contact)
+  const [userProfile, setUserProfile] = useState({});
+
+  // activePage - which page to show (dashboard, medications, fitness, etc.)
   const [activePage, setActivePage] = useState("dashboard");
 
-  // controls whether voice announcements are on/off
+  // Voice enabled state - controls whether voice announcements are on/off
+  // true = voice ON, false = voice OFF
   const [voiceEnabled, setVoiceEnabled] = useState(true);
 
   // Large text mode for accessibility
@@ -3224,4 +3792,148 @@ export default function App() {
       }
     });
   }, [user]); // Re-run when user changes (login/logout)
+
+  // ADD THIS ENTIRE useEffect: loads reminders from firebase
+  useEffect(() => {
+    // only run if user is logged in
+    if (!user) {
+      setReminders([]);
+      return;
+    }
+
+    // reference to user's reminders in firebase
+    const remindersRef = ref(database, `users/${user.uid}/reminders`);
+
+    // listen for changes in real-time
+    onValue(remindersRef, (snapshot) => {
+      if (snapshot.val()) {
+        // convert firebase object to array
+        const data = Object.entries(snapshot.val()).map(([id, reminder]) => ({
+          id,
+          ...reminder,
+        }));
+        setReminders(data);
+      } else {
+        setReminders([]);
+      }
+    });
+  }, [user]);
+
+  // Load user profile from Firebase
+  useEffect(() => {
+    if (!user) {
+      setUserProfile({});
+      return;
+    }
+
+    const profileRef = ref(database, `users/${user.uid}/profile`);
+
+    onValue(profileRef, (snapshot) => {
+      if (snapshot.val()) {
+        setUserProfile(snapshot.val());
+      } else {
+        setUserProfile({});
+      }
+    });
+  }, [user]);
+
+  // Loading State
+
+  // While checking authentication, show loading message
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+          fontFamily: "sans-serif",
+          color: "#64748b",
+        }}
+      >
+        Loading...
+      </div>
+    );
+  }
+
+  // Not Logged In State
+
+  // If no user is logged in, show the login/signup page
+  if (!user) {
+    return <Auth user={user} setUser={setUser} />;
+  }
+
+  // define pages object
+  const pages = {
+    dashboard: (
+      <Dashboard
+        user={user}
+        medications={medications}
+        setActivePage={setActivePage}
+      />
+    ),
+    medications: (
+      <Medications
+        user={user}
+        medications={medications}
+        setActivePage={setActivePage}
+        voiceEnabled={voiceEnabled}
+        setVoiceEnabled={setVoiceEnabled}
+      />
+    ),
+    fitness: <FitnessPage user={user} setActivePage={setActivePage} />,
+    chat: (
+      <Chat
+        user={user}
+        setActivePage={setActivePage}
+        voiceEnabled={voiceEnabled}
+        setVoiceEnabled={setVoiceEnabled}
+      />
+    ),
+    profile: (
+      <HealthProfile
+        user={user}
+        medications={medications}
+        setActivePage={setActivePage}
+        voiceEnabled={voiceEnabled}
+      />
+    ),
+    emergency: (
+      <Emergency
+        user={user}
+        medications={medications}
+        setActivePage={setActivePage}
+        userProfile={userProfile}
+      />
+    ),
+    settings: (
+      <Settings
+        user={user}
+        setActivePage={setActivePage}
+        largeTextEnabled={largeTextEnabled}
+        setLargeTextEnabled={setLargeTextEnabled}
+        highContrastEnabled={highContrastEnabled}
+        setHighContrastEnabled={setHighContrastEnabled}
+      />
+    ),
+    measurements: <Measurements user={user} setActivePage={setActivePage} />,
+  };
+
+  return (
+    <div
+      className={`app-root ${largeTextEnabled ? "large-text" : ""} ${highContrastEnabled ? "high-contrast" : ""}`}
+    >
+      {/* ADD THIS: notification manager component */}
+      {/* passes user, medications, and reminders as props */}
+      <NotificationManager
+        user={user}
+        medications={medications}
+        reminders={reminders}
+      />
+
+      {/* your existing page routing */}
+      {pages[activePage] || pages.dashboard}
+    </div>
+  );
 }
