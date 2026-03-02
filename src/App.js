@@ -2420,11 +2420,8 @@ function FitnessPage({ user, setActivePage, voiceEnabled }) {
   // Get username for display
   const userName = user.email.split("@")[0];
 
-  // ═══════════════════════════════════════════════════════════════════════════════
   // EXERCISE TEMPLATES DATA
   // Accessibility-focused exercises organized by category
-  // ═══════════════════════════════════════════════════════════════════════════════
-
   const exerciseCategories = [
     {
       // ─── CHAIR EXERCISES ───
@@ -2735,6 +2732,7 @@ function FitnessPage({ user, setActivePage, voiceEnabled }) {
       count: parseInt(workoutCount) || 0,
       duration: parseInt(workoutDuration) || 0,
       timestamp: new Date().toISOString(),
+      isCustom: true,
     };
 
     // Add to existing activities array
@@ -2743,11 +2741,53 @@ function FitnessPage({ user, setActivePage, voiceEnabled }) {
     // Update Firebase
     await update(fitnessRef, { activities: newActivities });
 
+    // Voice announcement
+    if (voiceEnabled) {
+      speak(`${workoutName} has been added to your workouts`, true);
+    }
+
     // Reset form and hide it
     setShowAddWorkout(false);
     setWorkoutName("");
     setWorkoutCount("");
     setWorkoutDuration("");
+  };
+
+  // ADD TEMPLATE EXERCISE FUNCTION
+  // For when users select an exercise from the templates
+
+  const addTemplateExercise = async (exercise, category) => {
+    // Reference to today's fitness data
+    const fitnessRef = ref(database, `users/${user.uid}/fitness/${today}`);
+
+    // Create new activity object from the template
+    const newActivity = {
+      type: exercise.name,
+      category: category.name,
+      categoryIcon: category.icon,
+      exerciseIcon: exercise.icon,
+      count: 0, // Templates don't have a count
+      duration: exercise.durationMins,
+      benefits: exercise.benefits,
+      timestamp: new Date().toISOString(),
+      isTemplate: true, // Flag to indicate this came from a template
+    };
+
+    // Add to existing activities array
+    const newActivities = [...activities, newActivity];
+
+    // Update Firebase
+    await update(fitnessRef, { activities: newActivities });
+
+    // Voice announcement
+    if (voiceEnabled) {
+      speak(`${exercise.name} has been logged. Great job!`, true);
+    }
+
+    // Close all modals
+    setSelectedExercise(null);
+    setSelectedCategory(null);
+    setShowTemplateModal(false);
   };
 
   // Delete Workout Function
