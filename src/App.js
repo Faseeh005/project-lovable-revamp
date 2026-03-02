@@ -2802,20 +2802,56 @@ function FitnessPage({ user, setActivePage, voiceEnabled }) {
 
     // Update Firebase
     await update(fitnessRef, { activities: newActivities });
+
+    // Voice announcement
+    if (voiceEnabled) {
+      speak("Workout removed", true);
+    }
+  };
+
+  // SPEAK INSTRUCTIONS FUNCTION
+  // Reads the exercise instructions aloud using text-to-speech
+
+  const speakInstructions = (exercise) => {
+    // Check if speech synthesis is supported
+    if (!window.speechSynthesis) {
+      alert("Speech not supported in this browser");
+      return;
+    }
+
+    // Cancel any current speech
+    window.speechSynthesis.cancel();
+
+    // Build the message to speak
+    const message = `${exercise.name}. ${exercise.instructions}`;
+
+    // Create speech utterance
+    const utterance = new SpeechSynthesisUtterance(message);
+    utterance.rate = 0.85; // Slightly slower for clarity
+    utterance.pitch = 1.0;
+    utterance.lang = "en-GB";
+
+    // Speak the message
+    window.speechSynthesis.speak(utterance);
   };
 
   // Get Workout Icon Helper Function
 
   // Function to determine which emoji icon to show based on workout name
-  const getIcon = (name) => {
-    const lowerName = name.toLowerCase();
+  const getIcon = (activity) => {
+    // If its a template exercise then use stored icon
+    if (activity.exerciseIcon) return activity.exerciseIcon;
+    if (activity.categoryIcon) return activity.categoryIcon;
 
-    // Match keywords to appropriate icons
-    if (lowerName.includes("run")) return "📈";
-    if (lowerName.includes("walk")) return "👟";
-    if (lowerName.includes("jump")) return "🏃";
+    // For custom workouts, match keywords to appropriate icons
+    const lowerName = (activity.type || "").toLowerCase();
+    if (lowerName.includes("run")) return "🏃";
+    if (lowerName.includes("walk")) return "🚶";
+    if (lowerName.includes("jump")) return "⬆️";
     if (lowerName.includes("squat")) return "🏋️";
     if (lowerName.includes("yoga")) return "🧘";
+    if (lowerName.includes("stretch")) return "🙆";
+    if (lowerName.includes("breath")) return "🌬️";
 
     // Default icon for unrecognized workouts
     return "💪";
@@ -2840,177 +2876,86 @@ function FitnessPage({ user, setActivePage, voiceEnabled }) {
               <span style={{ color: "#22c55e", fontSize: 20 }}>📈</span>
               <h1 className="page-title-main">Fitness Tracker</h1>
             </div>
-            <p className="page-subtitle">Track your daily workouts</p>
+            <p className="page-subtitle">Track your daily exercises</p>
           </div>
         </div>
         <span className="header-user">{userName}</span>
       </div>
 
-      {/* STEPS BANNER with gradient background */}
+      {/* Stats Banner */}
       <div className="steps-banner">
         <div>
-          <div className="steps-label">TOTAL STEPS TODAY</div>
-          {/* Display total steps with comma separator for readability */}
-          <div className="steps-value">{totalSteps.toLocaleString()}</div>
-          <div className="steps-sub">
-            {activities.length} of {activities.length} workouts completed
-          </div>
+          <div className="steps-label">EXERCISES TODAY</div>
+          <div className="steps-value">{activities.length}</div>
+          <div className="steps-sub">Workouts completed</div>
         </div>
-
-        {/* Decorative shoe icon */}
-        <div className="steps-icon">👟</div>
+        <div style={{ textAlign: "center" }}>
+          <div className="steps-label">TOTAL TIME</div>
+          <div className="steps-value">{totalMins}</div>
+          <div className="steps-sub">Minutes</div>
+        </div>
+        <div style={{ textAlign: "right" }}>
+          <div className="steps-label">CALORIES</div>
+          <div className="steps-value">{calories}</div>
+          <div className="steps-sub">Burned</div>
+        </div>
       </div>
 
-      {/* WORKOUTS SECTION HEADER */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          margin: "24px 0 16px",
-        }}
-      >
-        <h2 className="section-title-lg">Your Workouts</h2>
+      {/* Decorative shoe icon */}
+      <div className="steps-icon">👟</div>
 
-        {/* Button to toggle the add workout form */}
-        <button
-          className="add-med-btn"
-          onClick={() => setShowAddWorkout(!showAddWorkout)}
+      {/* ═══ EXERCISE CATEGORIES - QUICK START ═══ */}
+      <div className="card-white" style={{ marginTop: 20 }}>
+        <h3 className="section-title">🏋️ Choose an Exercise</h3>
+        <p style={{ color: "#64748b", fontSize: 14, marginBottom: 16 }}>
+          Select a category that suits your needs today
+        </p>
+
+        {/* Category buttons grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+            gap: 12,
+          }}
         >
-          + Create Template
-        </button>
-      </div>
-
-      {/* ADD WORKOUT FORM (conditionally shown) */}
-      {showAddWorkout && (
-        <div className="card-white" style={{ marginBottom: 16 }}>
-          <h3 className="section-title">Add Workout</h3>
-
-          {/* Form row with inputs */}
-          <div className="form-row">
-            <input
-              className="form-input"
-              placeholder="Workout name (e.g. Morning Walk)"
-              value={workoutName}
-              onChange={(e) => setWorkoutName(e.target.value)}
-            />
-            <input
-              className="form-input"
-              type="number"
-              placeholder="Count (steps/reps)"
-              value={workoutCount}
-              onChange={(e) => setWorkoutCount(e.target.value)}
-            />
-            <input
-              className="form-input"
-              type="number"
-              placeholder="Duration (mins)"
-              value={workoutDuration}
-              onChange={(e) => setWorkoutDuration(e.target.value)}
-            />
-            <button className="add-med-btn" onClick={addWorkout}>
-              Add
+          {exerciseCategories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => {
+                setSelectedCategory(category);
+                setShowTemplateModal(true);
+              }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                padding: "16px 12px",
+                background: category.color,
+                border: "2px solid transparent",
+                borderRadius: 12,
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+              onMouseOver={(e) =>
+                (e.currentTarget.style.borderColor = "#2563eb")
+              }
+              onMouseOut={(e) =>
+                (e.currentTarget.style.borderColor = "transparent")
+              }
+            >
+              <span style={{ fontSize: 28, marginBottom: 8 }}>
+                {category.icon}
+              </span>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "#1e293b" }}>
+                {category.name}
+              </span>
+              <span style={{ fontSize: 11, color: "#64748b", marginTop: 4 }}>
+                {category.exercises.length} exercises
+              </span>
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* WORKOUTS LIST */}
-      {activities.length === 0 ? (
-        // Empty state if no workouts
-        <div className="empty-state">
-          <div style={{ fontSize: 56 }}>🏃</div>
-          <p>No workouts yet. Add your first workout!</p>
-        </div>
-      ) : (
-        // Grid of workout cards
-        <div className="workout-cards-grid">
-          {activities.map((activity, index) => (
-            <div className="workout-card" key={index}>
-              {/* Workout Card Header */}
-              <div className="workout-card-top">
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  {/* Icon based on workout type */}
-                  <span style={{ fontSize: 22 }}>{getIcon(activity.type)}</span>
-                  <div>
-                    <div className="workout-name">{activity.type}</div>
-                    <div className="editable-tag">Editable</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Workout Stats (Count and Duration) */}
-              <div className="workout-stats">
-                {/* Count stat with blue background */}
-                <div className="workout-stat blue-bg">
-                  <div className="workout-stat-label">COUNT</div>
-                  <div className="workout-stat-value blue">
-                    {activity.count || 0}
-                  </div>
-                </div>
-
-                {/* Duration stat with green background */}
-                <div className="workout-stat green-bg">
-                  <div className="workout-stat-label">DURATION</div>
-                  <div className="workout-stat-value green">
-                    {activity.duration || 0} min
-                  </div>
-                </div>
-              </div>
-
-              {/* Last Updated */}
-              <div className="workout-last-updated">Last updated: Today</div>
-
-              {/* Action Buttons */}
-              <div className="workout-actions">
-                <button className="workout-action-btn flex-1">✏️ Edit</button>
-                <button className="workout-action-btn">🕐 History</button>
-                <button
-                  className="workout-delete-btn"
-                  onClick={() => deleteWorkout(index)}
-                >
-                  🗑️
-                </button>
-              </div>
-            </div>
           ))}
         </div>
-      )}
-
-      {/* SUMMARY STATISTICS */}
-      <h2 className="section-title-lg" style={{ marginTop: 32 }}>
-        Summary
-      </h2>
-
-      {/* Grid of 4 summary cards */}
-      <div className="summary-grid">
-        {[
-          {
-            icon: "🏋️",
-            value: activities.length,
-            label: "Workouts",
-            color: "#f97316",
-          },
-          {
-            icon: "👟",
-            value: totalSteps.toLocaleString(),
-            label: "Total Steps",
-            color: "#3b82f6",
-          },
-          {
-            icon: "⏱️",
-            value: totalMins,
-            label: "Total Minutes",
-            color: "#22c55e",
-          },
-          { icon: "🔥", value: calories, label: "Calories", color: "#ef4444" },
-        ].map((stat, index) => (
-          <div className="summary-card" key={index}>
-            <div style={{ fontSize: 28, color: stat.color }}>{stat.icon}</div>
-            <div className="summary-value">{stat.value}</div>
-            <div className="summary-label">{stat.label}</div>
-          </div>
-        ))}
       </div>
     </div>
   );
