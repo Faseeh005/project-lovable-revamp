@@ -2414,6 +2414,24 @@ function FitnessPage({ user, setActivePage, voiceEnabled }) {
   const [workoutCount, setWorkoutCount] = useState(""); // Number of reps/steps
   const [workoutDuration, setWorkoutDuration] = useState(""); // Minutes
 
+  // Speak function uses browser's speech synthesis to read text aloud
+  const speak = (text, enabled = true) => {
+    // Only speak if voice is enabled and speech synthesis is available
+    if (!enabled || !window.speechSynthesis) return;
+
+    // Cancel any currently speaking text
+    window.speechSynthesis.cancel();
+
+    // Create new utterance
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.9; // Slightly slower for clarity
+    utterance.pitch = 1.0;
+    utterance.lang = "en-GB";
+
+    // Speak the text
+    window.speechSynthesis.speak(utterance);
+  };
+
   // Get today's date
   const today = new Date().toISOString().split("T")[0];
 
@@ -2689,9 +2707,10 @@ function FitnessPage({ user, setActivePage, voiceEnabled }) {
     const fitnessRef = ref(database, `users/${user.uid}/fitness/${today}`);
 
     // Listen for changes and update state
-    onValue(fitnessRef, (snapshot) => {
+    const unsubscribe = onValue(fitnessRef, (snapshot) => {
       if (snapshot.val()) setFitness(snapshot.val());
     });
+    return () => unsubscribe();
   }, [user, today]);
 
   // Calculate Statistics
@@ -2742,8 +2761,8 @@ function FitnessPage({ user, setActivePage, voiceEnabled }) {
     await update(fitnessRef, { activities: newActivities });
 
     // Voice announcement
-    if (voiceEnabled) {
-      speak(`${workoutName} has been added to your workouts`, true);
+    if (voiceEnabled && window.speechSynthesis) {
+      speak(`${workoutName} has been added to your exercises`, true);
     }
 
     // Reset form and hide it
@@ -2904,14 +2923,14 @@ function FitnessPage({ user, setActivePage, voiceEnabled }) {
       {/* Decorative shoe icon */}
       <div className="steps-icon">👟</div>
 
-      {/* ═══ EXERCISE CATEGORIES - QUICK START ═══ */}
+      {/* EXERCISE CATEGORIES */}
       <div className="card-white" style={{ marginTop: 20 }}>
         <h3 className="section-title">🏋️ Choose an Exercise</h3>
         <p style={{ color: "#64748b", fontSize: 14, marginBottom: 16 }}>
           Select a category that suits your needs today
         </p>
 
-        {/* Category buttons grid */}
+        {/* Category grid */}
         <div
           style={{
             display: "grid",
@@ -2922,27 +2941,21 @@ function FitnessPage({ user, setActivePage, voiceEnabled }) {
           {exerciseCategories.map((category) => (
             <button
               key={category.id}
-              onClick={() => {
-                setSelectedCategory(category);
-                setShowTemplateModal(true);
-              }}
+              type="button"
               style={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 padding: "16px 12px",
                 background: category.color,
-                border: "2px solid transparent",
+                border: "2px solid #e2e8f0",
                 borderRadius: 12,
                 cursor: "pointer",
-                transition: "all 0.2s",
               }}
-              onMouseOver={(e) =>
-                (e.currentTarget.style.borderColor = "#2563eb")
-              }
-              onMouseOut={(e) =>
-                (e.currentTarget.style.borderColor = "transparent")
-              }
+              onClick={() => {
+                setSelectedCategory(category);
+                setShowTemplateModal(true);
+              }}
             >
               <span style={{ fontSize: 28, marginBottom: 8 }}>
                 {category.icon}
@@ -2957,6 +2970,504 @@ function FitnessPage({ user, setActivePage, voiceEnabled }) {
           ))}
         </div>
       </div>
+
+      {/* ═══ CUSTOM WORKOUT SECTION ═══ */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          margin: "24px 0 16px",
+        }}
+      >
+        <h2 className="section-title-lg">Your Workouts</h2>
+        <button
+          className="add-med-btn"
+          onClick={() => setShowAddWorkout(!showAddWorkout)}
+          style={{ background: "#475569" }}
+        >
+          + Custom Workout
+        </button>
+      </div>
+
+      {/* ═══ ADD CUSTOM WORKOUT FORM ═══ */}
+      {showAddWorkout && (
+        <div className="card-white" style={{ marginBottom: 16 }}>
+          <h3 className="section-title">Add Custom Workout</h3>
+          <div className="form-row">
+            <input
+              className="form-input"
+              placeholder="Workout name"
+              value={workoutName}
+              onChange={(e) => setWorkoutName(e.target.value)}
+            />
+            <input
+              className="form-input"
+              type="number"
+              placeholder="Count"
+              value={workoutCount}
+              onChange={(e) => setWorkoutCount(e.target.value)}
+            />
+            <input
+              className="form-input"
+              type="number"
+              placeholder="Duration (mins)"
+              value={workoutDuration}
+              onChange={(e) => setWorkoutDuration(e.target.value)}
+            />
+            <button className="add-med-btn" onClick={addWorkout}>
+              Add
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ WORKOUTS LIST ═══ */}
+      {activities.length === 0 ? (
+        <div className="empty-state">
+          <div style={{ fontSize: 56 }}>🏃</div>
+          <p>No exercises logged today</p>
+          <p style={{ fontSize: 14, marginTop: 8, color: "#94a3b8" }}>
+            Choose an exercise category above to get started
+          </p>
+        </div>
+      ) : (
+        <div className="workout-cards-grid">
+          {activities.map((activity, index) => (
+            <div className="workout-card" key={index}>
+              <div className="workout-card-top">
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ fontSize: 26 }}>{getIcon(activity)}</span>
+                  <div>
+                    <div className="workout-name">{activity.type}</div>
+                    <div className="editable-tag">
+                      {activity.category || "Custom"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {activity.benefits && (
+                <div
+                  style={{
+                    fontSize: 12,
+                    color: "#64748b",
+                    marginBottom: 12,
+                    padding: "8px 10px",
+                    background: "#f8fafc",
+                    borderRadius: 6,
+                  }}
+                >
+                  💪 {activity.benefits}
+                </div>
+              )}
+
+              <div className="workout-stats">
+                {activity.count > 0 && (
+                  <div className="workout-stat blue-bg">
+                    <div className="workout-stat-label">COUNT</div>
+                    <div className="workout-stat-value blue">
+                      {activity.count}
+                    </div>
+                  </div>
+                )}
+                <div className="workout-stat green-bg">
+                  <div className="workout-stat-label">DURATION</div>
+                  <div className="workout-stat-value green">
+                    {activity.duration} min
+                  </div>
+                </div>
+              </div>
+
+              <div className="workout-last-updated">
+                Completed at{" "}
+                {new Date(activity.timestamp).toLocaleTimeString("en-GB", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </div>
+
+              <div className="workout-actions">
+                <button
+                  className="workout-delete-btn"
+                  onClick={() => deleteWorkout(index)}
+                >
+                  🗑️ Remove
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ═══ SUMMARY ═══ */}
+      <h2 className="section-title-lg" style={{ marginTop: 32 }}>
+        Today's Summary
+      </h2>
+      <div className="summary-grid">
+        {[
+          {
+            icon: "🏋️",
+            value: activities.length,
+            label: "Exercises",
+            color: "#f97316",
+          },
+          { icon: "⏱️", value: totalMins, label: "Minutes", color: "#3b82f6" },
+          { icon: "🔥", value: calories, label: "Calories", color: "#ef4444" },
+          {
+            icon: "👟",
+            value: totalSteps.toLocaleString(),
+            label: "Steps",
+            color: "#22c55e",
+          },
+        ].map((stat, index) => (
+          <div className="summary-card" key={index}>
+            <div style={{ fontSize: 28, color: stat.color }}>{stat.icon}</div>
+            <div className="summary-value">{stat.value}</div>
+            <div className="summary-label">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════════════════
+          MODAL - THIS IS THE IMPORTANT PART THAT WAS MISSING
+          ═══════════════════════════════════════════════════════════════════════════ */}
+      {showTemplateModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+          }}
+          onClick={() => {
+            setShowTemplateModal(false);
+            setSelectedCategory(null);
+            setSelectedExercise(null);
+          }}
+        >
+          <div
+            style={{
+              background: "white",
+              borderRadius: 16,
+              width: "90%",
+              maxWidth: 600,
+              maxHeight: "90vh",
+              overflow: "auto",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div
+              style={{
+                padding: "24px 24px 0",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                borderBottom: "1px solid #e2e8f0",
+                paddingBottom: 16,
+              }}
+            >
+              <div>
+                <h2 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>
+                  {selectedExercise
+                    ? selectedExercise.name
+                    : selectedCategory
+                      ? `${selectedCategory.icon} ${selectedCategory.name}`
+                      : "Choose Category"}
+                </h2>
+                <p
+                  style={{
+                    fontSize: 13,
+                    color: "#64748b",
+                    marginTop: 4,
+                    margin: "4px 0 0 0",
+                  }}
+                >
+                  {selectedExercise
+                    ? selectedExercise.benefits
+                    : selectedCategory
+                      ? selectedCategory.description
+                      : "Select an exercise category"}
+                </p>
+              </div>
+              <button
+                style={{
+                  background: "#f1f5f9",
+                  border: "none",
+                  fontSize: 14,
+                  cursor: "pointer",
+                  color: "#475569",
+                  padding: "8px 12px",
+                  borderRadius: 6,
+                  fontWeight: 500,
+                }}
+                onClick={() => {
+                  if (selectedExercise) {
+                    setSelectedExercise(null);
+                  } else if (selectedCategory) {
+                    setSelectedCategory(null);
+                  } else {
+                    setShowTemplateModal(false);
+                  }
+                }}
+              >
+                {selectedExercise || selectedCategory ? "← Back" : "✕ Close"}
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div style={{ padding: 24 }}>
+              {/* ─── EXERCISE DETAIL VIEW ─── */}
+              {selectedExercise && (
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 64, marginBottom: 16 }}>
+                    {selectedExercise.icon}
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      gap: 12,
+                      marginBottom: 20,
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <span
+                      style={{
+                        background: "#f1f5f9",
+                        padding: "8px 16px",
+                        borderRadius: 20,
+                        fontSize: 13,
+                      }}
+                    >
+                      ⏱️ {selectedExercise.duration}
+                    </span>
+                    <span
+                      style={{
+                        background: "#f1f5f9",
+                        padding: "8px 16px",
+                        borderRadius: 20,
+                        fontSize: 13,
+                      }}
+                    >
+                      💪 {selectedExercise.benefits}
+                    </span>
+                  </div>
+
+                  <div
+                    style={{
+                      background: "#f0fdf4",
+                      border: "2px solid #0d9488",
+                      borderRadius: 12,
+                      padding: 20,
+                      marginBottom: 16,
+                      textAlign: "left",
+                    }}
+                  >
+                    <h4
+                      style={{
+                        color: "#115e59",
+                        marginBottom: 10,
+                        fontSize: 14,
+                        margin: "0 0 10px 0",
+                      }}
+                    >
+                      📋 Instructions
+                    </h4>
+                    <p
+                      style={{
+                        color: "#374151",
+                        lineHeight: 1.6,
+                        margin: "0 0 16px 0",
+                      }}
+                    >
+                      {selectedExercise.instructions}
+                    </p>
+                    <button
+                      onClick={() => speakInstructions(selectedExercise)}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 8,
+                        padding: "10px 20px",
+                        background: "#0d9488",
+                        color: "white",
+                        border: "none",
+                        borderRadius: 8,
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                      }}
+                    >
+                      🔊 Listen to Instructions
+                    </button>
+                  </div>
+
+                  {selectedExercise.accessibilityNotes && (
+                    <div
+                      style={{
+                        background: "#eff6ff",
+                        border: "2px solid #0284c7",
+                        borderRadius: 12,
+                        padding: 20,
+                        textAlign: "left",
+                        marginBottom: 20,
+                      }}
+                    >
+                      <h4
+                        style={{
+                          color: "#075985",
+                          fontSize: 14,
+                          margin: "0 0 10px 0",
+                        }}
+                      >
+                        ♿ Accessibility Notes
+                      </h4>
+                      <ul style={{ margin: 0, paddingLeft: 20 }}>
+                        {selectedExercise.accessibilityNotes.map((note, i) => (
+                          <li
+                            key={i}
+                            style={{
+                              color: "#374151",
+                              padding: "4px 0",
+                              fontSize: 14,
+                            }}
+                          >
+                            {note}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() =>
+                      addTemplateExercise(selectedExercise, selectedCategory)
+                    }
+                    style={{
+                      padding: "14px 32px",
+                      background: "#2563eb",
+                      color: "white",
+                      border: "none",
+                      borderRadius: 8,
+                      fontSize: 16,
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      width: "100%",
+                    }}
+                  >
+                    ✓ Log This Exercise
+                  </button>
+                </div>
+              )}
+
+              {/* ─── EXERCISE LIST ─── */}
+              {selectedCategory && !selectedExercise && (
+                <div
+                  style={{ display: "flex", flexDirection: "column", gap: 8 }}
+                >
+                  {selectedCategory.exercises.map((exercise) => (
+                    <button
+                      key={exercise.id}
+                      type="button"
+                      onClick={() => setSelectedExercise(exercise)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 14,
+                        padding: "14px 16px",
+                        background: "#f8fafc",
+                        border: "2px solid #e2e8f0",
+                        borderRadius: 10,
+                        cursor: "pointer",
+                        textAlign: "left",
+                        width: "100%",
+                      }}
+                    >
+                      <span style={{ fontSize: 28 }}>{exercise.icon}</span>
+                      <div style={{ flex: 1 }}>
+                        <div
+                          style={{
+                            fontWeight: 600,
+                            color: "#1e293b",
+                            marginBottom: 2,
+                          }}
+                        >
+                          {exercise.name}
+                        </div>
+                        <div style={{ fontSize: 12, color: "#64748b" }}>
+                          {exercise.duration} • {exercise.benefits}
+                        </div>
+                      </div>
+                      <span style={{ color: "#94a3b8", fontSize: 18 }}>→</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* ─── CATEGORY SELECTION ─── */}
+              {!selectedCategory && !selectedExercise && (
+                <div
+                  style={{ display: "flex", flexDirection: "column", gap: 12 }}
+                >
+                  {exerciseCategories.map((category) => (
+                    <button
+                      key={category.id}
+                      type="button"
+                      onClick={() => setSelectedCategory(category)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 16,
+                        padding: "16px 20px",
+                        background: category.color,
+                        border: "2px solid #e2e8f0",
+                        borderRadius: 12,
+                        cursor: "pointer",
+                        textAlign: "left",
+                        width: "100%",
+                      }}
+                    >
+                      <span style={{ fontSize: 36 }}>{category.icon}</span>
+                      <div>
+                        <div
+                          style={{
+                            fontWeight: 700,
+                            color: "#1e293b",
+                            marginBottom: 4,
+                          }}
+                        >
+                          {category.name}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: 13,
+                            color: "#64748b",
+                            marginBottom: 4,
+                          }}
+                        >
+                          {category.description}
+                        </div>
+                        <div style={{ fontSize: 12, color: "#94a3b8" }}>
+                          {category.exercises.length} exercises
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
