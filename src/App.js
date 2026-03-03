@@ -3201,7 +3201,7 @@ function FitnessPage({ user, userProfile, setActivePage, voiceEnabled }) {
     activities: [],
   });
 
-  // Controls whether the "Add Exercise" form is visible for custom workouts
+  // Controls whether the "Add Exercise" form is visible for custom exercises
   const [showAddExercise, setShowAddExercise] = useState(false);
 
   // Controls whether the exercise template modal is visible
@@ -3214,6 +3214,10 @@ function FitnessPage({ user, userProfile, setActivePage, voiceEnabled }) {
   const [selectedExercise, setSelectedExercise] = useState(null);
 
   // Form fields for adding a new workout
+  const [workoutType, setWorkoutType] = useState("");
+  const [workoutCalories, setWorkoutCalories] = useState("");
+  const [workoutIntensity, setWorkoutIntensity] = useState("moderate");
+  const [workoutNotes, setWorkoutNotes] = useState("");
   const [workoutName, setWorkoutName] = useState("");
   const [workoutCount, setWorkoutCount] = useState(""); // Number of reps/steps
   const [workoutDuration, setWorkoutDuration] = useState(""); // Minutes
@@ -3561,36 +3565,65 @@ function FitnessPage({ user, userProfile, setActivePage, voiceEnabled }) {
   // Function to add a new workout/activity
   const addWorkout = async () => {
     // Validate that workout name is provided
-    if (!workoutName) return;
+    if (!workoutType.trim() || !workoutDuration) {
+      alert("Please enter exercise type and duration");
+      return;
+    }
+    let calculatedCalories = workoutCalories;
 
-    // Reference to today's fitness data
-    const fitnessRef = ref(database, `users/${user.uid}/fitness/${today}`);
+    if (!workoutCalories || workoutCalories === "") {
+      const duration = parseInt(workoutDuration) || 0;
+      const calorieRates = {
+        light: 3,
+        moderate: 5.5,
+        vigorous: 9,
+      };
+      const rate = calorieRates[workoutIntensity] || 5.5;
+      calculatedCalories = Math.round(duration * rate);
+    }
 
-    // Create new activity object
+    // Create the exercise object
     const newActivity = {
-      type: workoutName,
-      count: parseInt(workoutCount) || 0,
+      type: workoutType.trim(),
       duration: parseInt(workoutDuration) || 0,
+      calories: parseInt(calculatedCalories) || 0,
+      intensity: workoutIntensity,
+      notes: workoutNotes.trim(),
       timestamp: new Date().toISOString(),
       isCustom: true,
     };
 
-    // Add to existing activities array
-    const newActivities = [...activities, newActivity];
+    try {
+      const today = new Date().toISOString().split("T")[0];
+      // Reference to today's fitness data
+      const fitnessRef = ref(database, `users/${user.uid}/fitness/${today}`);
+      // Get current activities
+      const snapshot = await get(fitnessRef);
+      const currentData = snapshot.val() || {};
+      const currentActivities = currentData.activities || [];
 
-    // Update Firebase
-    await update(fitnessRef, { activities: newActivities });
+      // Add new activity to the array
+      await update(fitnessRef, {
+        activities: [...currentActivities, newActivity],
+      });
 
-    // Voice announcement
-    if (voiceEnabled && window.speechSynthesis) {
-      speak(`${workoutName} has been added to your exercises`, true);
+      // Voice announcement
+      speak(
+        `${workoutType} logged. ${calculatedCalories} calories burned.`,
+        voiceEnabled,
+      );
+
+      // Reset form fields
+      setWorkoutType("");
+      setWorkoutDuration("");
+      setWorkoutCalories("");
+      setWorkoutIntensity("moderate");
+      setWorkoutNotes("");
+      setShowAddExercise(false); // Close the form after adding
+    } catch (error) {
+      console.error("Error adding exercise:", error);
+      alert("Failed to add exercise. Please try again.");
     }
-
-    // Reset form and hide it
-    setShowAddExercise(false);
-    setWorkoutName("");
-    setWorkoutCount("");
-    setWorkoutDuration("");
   };
 
   // ADD TEMPLATE EXERCISE FUNCTION
@@ -3683,7 +3716,7 @@ function FitnessPage({ user, userProfile, setActivePage, voiceEnabled }) {
     if (activity.exerciseIcon) return activity.exerciseIcon;
     if (activity.categoryIcon) return activity.categoryIcon;
 
-    // For custom workouts, match keywords to appropriate icons
+    // For custom exercises, match keywords to appropriate icons
     const lowerName = (activity.type || "").toLowerCase();
     if (lowerName.includes("run")) return "🏃";
     if (lowerName.includes("walk")) return "🚶";
@@ -3693,7 +3726,7 @@ function FitnessPage({ user, userProfile, setActivePage, voiceEnabled }) {
     if (lowerName.includes("stretch")) return "🙆";
     if (lowerName.includes("breath")) return "🌬️";
 
-    // Default icon for unrecognized workouts
+    // Default icon for unrecognized exercises
     return "💪";
   };
 
@@ -3727,7 +3760,7 @@ function FitnessPage({ user, userProfile, setActivePage, voiceEnabled }) {
         <div>
           <div className="steps-label">EXERCISES TODAY</div>
           <div className="steps-value">{activities.length}</div>
-          <div className="steps-sub">Workouts completed</div>
+          <div className="steps-sub">Exercises completed</div>
         </div>
         <div style={{ textAlign: "center" }}>
           <div className="steps-label">TOTAL TIME</div>
@@ -3792,7 +3825,7 @@ function FitnessPage({ user, userProfile, setActivePage, voiceEnabled }) {
         </div>
       </div>
 
-      {/* ═══ CUSTOM WORKOUT SECTION ═══ */}
+      {/* Custom Exercise Section */}
       <div
         style={{
           display: "flex",
@@ -3801,49 +3834,225 @@ function FitnessPage({ user, userProfile, setActivePage, voiceEnabled }) {
           margin: "24px 0 16px",
         }}
       >
-        <h2 className="section-title-lg">Your Workouts</h2>
+        <h2 className="section-title-lg">Your Exercises</h2>
         <button
           className="add-med-btn"
           onClick={() => setShowAddExercise(!showAddExercise)}
           style={{ background: "#475569" }}
         >
-          + Custom Workout
+          + Custom Exercise
         </button>
       </div>
 
       {/* ═══ ADD CUSTOM EXERCISE FORM ═══ */}
       {showAddExercise && (
-        <div className="card-white" style={{ marginBottom: 16 }}>
-          <h3 className="section-title">Add Custom Workout</h3>
-          <div className="form-row">
-            <input
-              className="form-input"
-              placeholder="Workout name"
-              value={workoutName}
-              onChange={(e) => setWorkoutName(e.target.value)}
-            />
-            <input
-              className="form-input"
-              type="number"
-              placeholder="Count"
-              value={workoutCount}
-              onChange={(e) => setWorkoutCount(e.target.value)}
-            />
-            <input
-              className="form-input"
-              type="number"
-              placeholder="Duration (mins)"
-              value={workoutDuration}
-              onChange={(e) => setWorkoutDuration(e.target.value)}
-            />
-            <button className="add-med-btn" onClick={addWorkout}>
-              Add
-            </button>
-          </div>
+        <div className="card-white" style={{ marginBottom: 20 }}>
+          <h3 className="section-title">Add Custom Exercise</h3>
+          <p style={{ color: "#64748b", fontSize: 14, marginBottom: 16 }}>
+            Log any exercise that doesn't fit the templates above
+          </p>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              addWorkout();
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {/* Exercise type */}
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "#374151",
+                    marginBottom: 6,
+                  }}
+                >
+                  Exercise Type *
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Walking, Swimming, Yoga"
+                  value={workoutType}
+                  onChange={(e) => setWorkoutType(e.target.value)}
+                  required
+                  style={{
+                    width: "100%",
+                    padding: "12px 16px",
+                    border: "2px solid #e2e8f0",
+                    borderRadius: 8,
+                    fontSize: 15,
+                    boxSizing: "border-box",
+                  }}
+                />
+              </div>
+
+              {/* Duration and Calories Row */}
+              <div style={{ display: "flex", gap: 12 }}>
+                {/* Duration */}
+                <div style={{ flex: 1 }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: "#374151",
+                      marginBottom: 6,
+                    }}
+                  >
+                    Duration (minutes) *
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="e.g., 30"
+                    value={workoutDuration}
+                    onChange={(e) => setWorkoutDuration(e.target.value)}
+                    required
+                    min="1"
+                    style={{
+                      width: "100%",
+                      padding: "12px 16px",
+                      border: "2px solid #e2e8f0",
+                      borderRadius: 8,
+                      fontSize: 15,
+                      boxSizing: "border-box",
+                    }}
+                  />
+                </div>
+
+                {/* Calories Burned */}
+                <div style={{ flex: 1 }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: "#374151",
+                      marginBottom: 6,
+                    }}
+                  >
+                    Calories Burned
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="e.g., 150"
+                    value={workoutCalories}
+                    onChange={(e) => setWorkoutCalories(e.target.value)}
+                    min="0"
+                    style={{
+                      width: "100%",
+                      padding: "12px 16px",
+                      border: "2px solid #e2e8f0",
+                      borderRadius: 8,
+                      fontSize: 15,
+                      boxSizing: "border-box",
+                    }}
+                  />
+                  <p
+                    style={{
+                      fontSize: 11,
+                      color: "#94a3b8",
+                      marginTop: 4,
+                      marginBottom: 0,
+                    }}
+                  >
+                    💡 Leave blank to auto-estimate
+                  </p>
+                </div>
+              </div>
+
+              {/* Intensity Level */}
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "#374151",
+                    marginBottom: 6,
+                  }}
+                >
+                  Intensity Level
+                </label>
+                <select
+                  value={workoutIntensity}
+                  onChange={(e) => setWorkoutIntensity(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "12px 16px",
+                    border: "2px solid #e2e8f0",
+                    borderRadius: 8,
+                    fontSize: 15,
+                    boxSizing: "border-box",
+                    background: "white",
+                  }}
+                >
+                  <option value="light">
+                    🟢 Light (stretching, slow walk)
+                  </option>
+                  <option value="moderate">
+                    🟡 Moderate (brisk walk, cycling)
+                  </option>
+                  <option value="vigorous">🔴 Vigorous (running, HIIT)</option>
+                </select>
+              </div>
+
+              {/* Notes (Optional) */}
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "#374151",
+                    marginBottom: 6,
+                  }}
+                >
+                  Notes (Optional)
+                </label>
+                <textarea
+                  placeholder="Any additional notes about this workout..."
+                  value={workoutNotes}
+                  onChange={(e) => setWorkoutNotes(e.target.value)}
+                  rows={2}
+                  style={{
+                    width: "100%",
+                    padding: "12px 16px",
+                    border: "2px solid #e2e8f0",
+                    borderRadius: 8,
+                    fontSize: 15,
+                    boxSizing: "border-box",
+                    resize: "vertical",
+                  }}
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                style={{
+                  width: "100%",
+                  padding: "14px",
+                  background: "#2563eb",
+                  color: "white",
+                  border: "none",
+                  borderRadius: 8,
+                  fontSize: 16,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  marginTop: 8,
+                }}
+              >
+                ✓ Log Exercise
+              </button>
+            </div>
+          </form>
         </div>
       )}
 
-      {/* ═══ WORKOUTS LIST ═══ */}
+      {/* Exercises List */}
       {activities.length === 0 ? (
         <div className="empty-state">
           <div style={{ fontSize: 56 }}>🏃</div>
@@ -3950,9 +4159,7 @@ function FitnessPage({ user, userProfile, setActivePage, voiceEnabled }) {
         ))}
       </div>
 
-      {/* ═══════════════════════════════════════════════════════════════════════════
-          MODAL - THIS IS THE IMPORTANT PART THAT WAS MISSING
-          ═══════════════════════════════════════════════════════════════════════════ */}
+      {/* MODAL - THIS IS THE IMPORTANT PART THAT WAS MISSING */}
       {showTemplateModal && (
         <div
           style={{
