@@ -5,7 +5,7 @@
 // ══════════════════════════════════════════════════════════════════════════════
 
 // Import React and the useState hook for managing component state
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // Import Firebase authentication functions
 import { auth } from "./firebase"; // Our Firebase configuration
@@ -14,6 +14,14 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
 } from "firebase/auth";
+
+// import biometric authentication functions
+import {
+  isBiometricAvailable,
+  saveCredentials,
+  hasStoredCredentials,
+  authenticateWithBiometric,
+} from "./biometricAuth";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Auth Component Function
@@ -47,6 +55,13 @@ function Auth({ user, setUser }) {
   // loading - boolean that tracks if we're currently processing authentication
   // true = show loading state, false = normal state
   const [loading, setLoading] = useState(false);
+
+  // Biometric state
+  const [biometricAvailable, setBiometricAvailable] = useState(false);
+  const [biometricType, setBiometricType] = useState("");
+  const [hasSavedCredentials, setHasSavedCredentials] = useState(false);
+  const [showBiometricPrompt, setShowBiometricPrompt] = useState(false);
+  const [biometricLoading, setBiometricLoading] = useState(false);
 
   // Handle Authentication Function
 
@@ -95,6 +110,14 @@ function Auth({ user, setUser }) {
           password,
         );
 
+        // After successful login, offer to save credentials for biometric
+        if (biometricAvailable && !hasSavedCredentials) {
+          setShowBiometricPrompt(true);
+        } else if (hasSavedCredentials) {
+          // Update stored credentials if already enabled
+          await saveCredentials(email, password);
+        }
+
         // Update the user state
         setUser(userCredential.user);
       }
@@ -128,6 +151,64 @@ function Auth({ user, setUser }) {
       // Set loading back to false to re-enable the submit button
       setLoading(false);
     }
+  };
+
+  // Check biometric availability on mount
+  useEffect(() => {
+    const checkBiometric = async () => {
+      const { isAvailable, biometryType } = await isBiometricAvailable();
+      setBiometricAvailable(isAvailable);
+      setBiometricType(biometryType);
+
+      if (isAvailable) {
+        const hasCredentials = await hasStoredCredentials();
+        setHasSavedCredentials(hasCredentials);
+
+        // Auto-prompt for biometric login if credentials exist
+        if (hasCredentials) {
+          handleBiometricLogin();
+        }
+      }
+    };
+
+    checkBiometric();
+  }, []);
+
+  // Handle biometric login
+  const handleBiometricLogin = async () => {
+    setBiometricLoading(true);
+    setError("");
+
+    try {
+      const result = await authenticateWithBiometric("Log in to MedFit Health");
+
+      if (result.success) {
+        await signInWithEmailAndPassword(auth, result.email, result.password);
+      } else {
+        if (result.error !== "Authentication failed") {
+          setError(result.error || "Biometric login failed");
+        }
+      }
+    } catch (error) {
+      console.error("Biometric login error:", error);
+      setError("Login failed. Please use email and password.");
+    } finally {
+      setBiometricLoading(false);
+    }
+  };
+
+  // Enable biometric login
+  const enableBiometricLogin = async () => {
+    const saved = await saveCredentials(email, password);
+    if (saved) {
+      setHasSavedCredentials(true);
+    }
+    setShowBiometricPrompt(false);
+  };
+
+  // Skip biometric setup
+  const skipBiometricSetup = () => {
+    setShowBiometricPrompt(false);
   };
 
   // HANDLE FORGOT PASSWORD
@@ -374,6 +455,59 @@ function Auth({ user, setUser }) {
              Shows when showForgotPassword is false
              ═══════════════════════════════════════════════════════════════════ */
           <form onSubmit={handleAuth}>
+            {/* Biometric login button */}
+            {biometricAvailable && hasSavedCredentials && !isSignUp && (
+              <div style={{ marginBottom: 20 }}>
+                <button
+                  type="button"
+                  onClick={handleBiometricLogin}
+                  disabled={biometricLoading}
+                  style={{
+                    width: "100%",
+                    padding: 14,
+                    background: "linear-gradient(135deg, #1e3a8a, #3b82f6)",
+                    color: "white",
+                    border: "none",
+                    borderRadius: 12,
+                    fontSize: 16,
+                    fontWeight: 600,
+                    cursor: biometricLoading ? "not-allowed" : "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 10,
+                    opacity: biometricLoading ? 0.7 : 1,
+                  }}
+                >
+                  {biometricLoading ? (
+                    "Authenticating..."
+                  ) : (
+                    <>
+                      <span style={{ fontSize: 24 }}>
+                        {biometricType === "Face ID" ? "👤" : "👆"}
+                      </span>
+                      Login with {biometricType}
+                    </>
+                  )}
+                </button>
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    margin: "16px 0",
+                    gap: 10,
+                  }}
+                >
+                  <div style={{ flex: 1, height: 1, background: "#e2e8f0" }} />
+                  <span style={{ color: "#94a3b8", fontSize: 13 }}>
+                    or use email
+                  </span>
+                  <div style={{ flex: 1, height: 1, background: "#e2e8f0" }} />
+                </div>
+              </div>
+            )}
+
             {/* Email field */}
             <div className="auth-field">
               <label className="auth-label">Email Address</label>
@@ -462,6 +596,108 @@ function Auth({ user, setUser }) {
           </form>
         )}
       </div>
+      {/* Biometric Setup Prompt Modal */}
+      {showBiometricPrompt && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 10000,
+            padding: 20,
+          }}
+        >
+          <div
+            style={{
+              background: "white",
+              borderRadius: 20,
+              padding: 24,
+              maxWidth: 340,
+              width: "100%",
+              textAlign: "center",
+            }}
+          >
+            <div
+              style={{
+                width: 70,
+                height: 70,
+                background: "linear-gradient(135deg, #dbeafe, #bfdbfe)",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 16px",
+                fontSize: 32,
+              }}
+            >
+              {biometricType === "Face ID" ? "👤" : "👆"}
+            </div>
+
+            <h3
+              style={{
+                margin: "0 0 8px",
+                fontSize: 20,
+                fontWeight: 700,
+                color: "#1e293b",
+              }}
+            >
+              Enable {biometricType}?
+            </h3>
+
+            <p
+              style={{
+                margin: "0 0 24px",
+                color: "#64748b",
+                fontSize: 14,
+                lineHeight: 1.5,
+              }}
+            >
+              Log in faster next time using {biometricType}. Your credentials
+              will be stored securely.
+            </p>
+
+            <button
+              onClick={enableBiometricLogin}
+              style={{
+                width: "100%",
+                padding: 14,
+                background: "#2563eb",
+                color: "white",
+                border: "none",
+                borderRadius: 10,
+                fontSize: 16,
+                fontWeight: 600,
+                cursor: "pointer",
+                marginBottom: 10,
+              }}
+            >
+              Enable {biometricType}
+            </button>
+
+            <button
+              onClick={skipBiometricSetup}
+              style={{
+                width: "100%",
+                padding: 14,
+                background: "transparent",
+                color: "#64748b",
+                border: "none",
+                borderRadius: 10,
+                fontSize: 14,
+                cursor: "pointer",
+              }}
+            >
+              Not Now
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

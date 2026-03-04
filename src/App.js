@@ -31,6 +31,14 @@ import {
 } from "./Notifications";
 import { type } from "firebase/firestore/pipelines";
 
+// Add this import with your other imports
+import {
+  isBiometricAvailable,
+  saveCredentials,
+  hasStoredCredentials,
+  authenticateWithBiometric,
+} from "./biometricAuth";
+
 // VOICE ASSISTANT UTILITY FUNCTION
 // This function converts text to speech using the Web Speech API
 // Built into all modern browsers - no libraries needed!
