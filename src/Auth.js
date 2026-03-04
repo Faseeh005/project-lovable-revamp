@@ -154,7 +154,7 @@ function Auth({ user, setUser }) {
   };
 
   // Check biometric availability on mount
-  useEffect(() => {
+  /*useEffect(() => {
     const checkBiometric = async () => {
       const { isAvailable, biometryType } = await isBiometricAvailable();
       setBiometricAvailable(isAvailable);
@@ -172,7 +172,7 @@ function Auth({ user, setUser }) {
     };
 
     checkBiometric();
-  }, []);
+  }, []); */
 
   // Handle biometric login
   const handleBiometricLogin = async () => {
