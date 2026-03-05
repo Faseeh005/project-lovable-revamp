@@ -1,7 +1,7 @@
 // React and hooks - the foundation of our React app
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
 
-import "./App.css";
+// CSS imported from main.tsx
 
 // Firebase imports - for database and authentication
 import { database, auth } from "./firebase";
@@ -29,7 +29,7 @@ import {
   showNotification,
   scheduleNotification,
 } from "./Notifications";
-import { type } from "firebase/firestore/pipelines";
+// import { type } from "firebase/firestore/pipelines"; // removed - unused
 
 // Add this import with your other imports
 import {
