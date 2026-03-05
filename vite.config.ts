@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   esbuild: {
-    include: /Individual-Project.*\.js$/,
-    loader: "jsx",
+    include: [/\.tsx?$/, /Individual-Project.*\.js$/],
+    loader: "tsx",
   },
 }));
