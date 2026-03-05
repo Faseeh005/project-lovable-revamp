@@ -1,5 +1,5 @@
 // React and hooks - the foundation of our React app
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 // CSS imported from main.tsx
 
@@ -847,6 +847,9 @@ function Dashboard({ user, userProfile, medications, setActivePage }) {
   // NOTIFICATIONS STATE
   // Controls whether the notifications dropdown is visible
   const [showNotifications, setShowNotifications] = useState(false);
+  const bellAnchorRef = useRef(null);
+  const [notificationsDropdownStyle, setNotificationsDropdownStyle] =
+    useState({});
 
   // Stores the user's reminders/notifications from Firebase
   const [notifications, setNotifications] = useState([]);
@@ -1201,13 +1204,49 @@ function Dashboard({ user, userProfile, medications, setActivePage }) {
     }
   };
 
+  const updateNotificationsDropdownPosition = () => {
+    if (!bellAnchorRef.current || typeof window === "undefined") return;
+
+    const rect = bellAnchorRef.current.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const panelWidth = Math.min(340, Math.max(260, viewportWidth - 24));
+    const margin = 12;
+
+    const preferredLeft = rect.right - panelWidth;
+    const clampedLeft = Math.min(
+      Math.max(margin, preferredLeft),
+      Math.max(margin, viewportWidth - panelWidth - margin),
+    );
+
+    setNotificationsDropdownStyle({
+      top: Math.round(rect.bottom + 8),
+      left: Math.round(clampedLeft),
+      width: panelWidth,
+    });
+  };
+
   const toggleNotifications = () => {
-    setShowNotifications(!showNotifications);
+    setShowNotifications((prev) => !prev);
   };
 
   const closeNotifications = () => {
     setShowNotifications(false);
   };
+
+  useEffect(() => {
+    if (!showNotifications) return undefined;
+
+    updateNotificationsDropdownPosition();
+
+    const handleViewportChange = () => updateNotificationsDropdownPosition();
+    window.addEventListener("resize", handleViewportChange);
+    window.addEventListener("scroll", handleViewportChange, true);
+
+    return () => {
+      window.removeEventListener("resize", handleViewportChange);
+      window.removeEventListener("scroll", handleViewportChange, true);
+    };
+  }, [showNotifications]);
 
   // This function returns the best available name for the user:
   // 1. First, try to get the first name from their profile (set during onboarding)
@@ -1373,7 +1412,7 @@ function Dashboard({ user, userProfile, medications, setActivePage }) {
           <span className="header-user">Logged in as {displayName}</span>
 
           {/* ═══ NOTIFICATIONS BELL BUTTON ═══ */}
-          <div style={{ position: "relative" }}>
+          <div className="notifications-anchor" ref={bellAnchorRef} style={{ position: "relative" }}>
             <button
               className="bell-btn"
               title="Notifications"
@@ -1432,15 +1471,16 @@ function Dashboard({ user, userProfile, medications, setActivePage }) {
                 <div
                   className="notifications-dropdown"
                   style={{
-                    position: "absolute",
-                    top: "calc(100% + 8px)",
-                    right: 0,
-                    width: 360,
-                    maxHeight: 480,
+                    position: "fixed",
+                    top: notificationsDropdownStyle.top ?? 80,
+                    left: notificationsDropdownStyle.left ?? 12,
+                    width: notificationsDropdownStyle.width ?? 340,
+                    maxWidth: "calc(100vw - 24px)",
+                    maxHeight: "70vh",
                     background: "white",
                     borderRadius: 16,
                     boxShadow: "0 10px 40px rgba(0, 0, 0, 0.2)",
-                    zIndex: 999,
+                    zIndex: 10010,
                     overflow: "hidden",
                     display: "flex",
                     flexDirection: "column",
