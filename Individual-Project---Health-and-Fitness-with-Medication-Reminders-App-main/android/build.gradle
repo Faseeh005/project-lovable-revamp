@@ -1,0 +1,45 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+// Patch to fix capacitor-health and other plugins using deprecated proguard-android.txt with AGP 9.1.0+
+def patchNodeModules = {
+    def plugins = ['capacitor-health', '@capgo/capacitor-native-biometric']
+    plugins.each { plugin ->
+        def buildFile = file("../node_modules/${plugin}/android/build.gradle")
+        if (buildFile.exists()) {
+            def content = buildFile.text
+            if (content.contains("'proguard-android.txt'")) {
+                println "Patching ${plugin} build.gradle to use proguard-android-optimize.txt"
+                buildFile.text = content.replace("'proguard-android.txt'", "'proguard-android-optimize.txt'")
+            }
+        }
+    }
+}
+patchNodeModules()
+
+buildscript {
+    
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:9.1.0'
+        classpath 'com.google.gms:google-services:4.4.4'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+apply from: "variables.gradle"
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
