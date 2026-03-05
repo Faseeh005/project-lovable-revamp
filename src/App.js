@@ -6603,24 +6603,71 @@ export default function App() {
   useEffect(() => {
     if (!user) {
       setUserProfile({});
+      setShowOnboarding(false);
+      setCheckingOnboarding(false);
       return;
     }
 
+    setCheckingOnboarding(true);
+
     const profileRef = ref(database, `users/${user.uid}/profile`);
 
-    onValue(profileRef, (snapshot) => {
+    /* onValue(profileRef, (snapshot) => {
       if (snapshot.val()) {
         setUserProfile(snapshot.val());
       } else {
         setUserProfile({});
       }
-    });
+    }); */
+
+    // IMPORTANT: capture unsubscribe so we don't leak listeners
+    const unsubscribe = onValue(
+      profileRef,
+      (snapshot) => {
+        const profile = snapshot.val();
+
+        if (profile) {
+          setUserProfile(profile);
+          setShowOnboarding(!profile.onboardingComplete);
+        } else {
+          setUserProfile({});
+          setShowOnboarding(true);
+        }
+
+        setCheckingOnboarding(false);
+      },
+      (error) => {
+        console.log("Profile listener error:", error);
+        setUserProfile({});
+        setShowOnboarding(true);
+        setCheckingOnboarding(false);
+      },
+    );
+
+    return () => unsubscribe();
   }, [user]);
 
   // Loading State
 
   // While checking authentication, show loading message
-  if (loading || checkingOnboarding) {
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+          fontFamily: "sans-serif",
+          color: "#64748b",
+        }}
+      >
+        Loading...
+      </div>
+    );
+  }
+
+  if (user && checkingOnboarding) {
     return (
       <div
         style={{

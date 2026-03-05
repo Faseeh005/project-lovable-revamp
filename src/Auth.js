@@ -16,12 +16,13 @@ import {
 } from "firebase/auth";
 
 // import biometric authentication functions
+// Import permissions manager
 import {
-  isBiometricAvailable,
-  saveCredentials,
-  hasStoredCredentials,
-  authenticateWithBiometric,
-} from "./biometricAuth";
+  checkBiometricAvailability,
+  saveBiometricCredentials,
+  getBiometricCredentials,
+  hasBiometricCredentials,
+} from "./permissionsManager";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Auth Component Function
