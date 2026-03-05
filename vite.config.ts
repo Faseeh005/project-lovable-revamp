@@ -18,8 +18,4 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  esbuild: {
-    include: [/\.tsx?$/, /Individual-Project.*\.js$/],
-    loader: "tsx",
-  },
 }));
