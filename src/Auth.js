@@ -116,7 +116,7 @@ function Auth({ user, setUser }) {
           setShowBiometricPrompt(true);
         } else if (hasSavedCredentials) {
           // Update stored credentials if already enabled
-          await saveCredentials(email, password);
+          await saveBiometricCredentials(email, password);
         }
 
         // Update the user state
@@ -181,13 +181,17 @@ function Auth({ user, setUser }) {
     setError("");
 
     try {
-      const result = await authenticateWithBiometric("Log in to MedFit Health");
+      const credentials = await getBiometricCredentials();
 
-      if (result.success) {
-        await signInWithEmailAndPassword(auth, result.email, result.password);
+      if (credentials) {
+        await signInWithEmailAndPassword(
+          auth,
+          credentials.email,
+          credentials.password,
+        );
       } else {
-        if (result.error !== "Authentication failed") {
-          setError(result.error || "Biometric login failed");
+        if (credentials.error !== "Authentication failed") {
+          setError(credentials.error || "Biometric login failed");
         }
       }
     } catch (error) {
@@ -200,7 +204,7 @@ function Auth({ user, setUser }) {
 
   // Enable biometric login
   const enableBiometricLogin = async () => {
-    const saved = await saveCredentials(email, password);
+    const saved = await saveBiometricCredentials(email, password);
     if (saved) {
       setHasSavedCredentials(true);
     }

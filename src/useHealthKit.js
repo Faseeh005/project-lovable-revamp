@@ -41,7 +41,7 @@ export const useHealthKit = () => {
     [],
   );
 
-  useEffect(() => {
+  /* useEffect(() => {
     // Build a 7-day array (oldest -> newest)
     const now = new Date();
     const defaultWeekly = Array.from({ length: 7 }, (_, idx) => {
@@ -58,7 +58,7 @@ export const useHealthKit = () => {
 
     setWeeklySteps(defaultWeekly);
     setIsLoading(false);
-  }, []);
+  }, []); */
 
   const requestAuthorization = async () => {
     // HealthKit is iOS-only, so always false on Android

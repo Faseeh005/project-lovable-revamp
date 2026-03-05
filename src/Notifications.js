@@ -5,7 +5,6 @@ export const requestNotificationPermission = async () => {
   // check if browser supports notifications at all
   if (!("Notification" in window)) {
     console.log("This browser does not support notifications");
-    alert("Your browser doesn't support notifications");
     return false;
   }
 
@@ -27,7 +26,7 @@ export const requestNotificationPermission = async () => {
 
   // user previously blocked notifications
   console.log("Permission denied");
-  alert("Notifications are blocked. Please enable them.");
+  console.log("Notifications are blocked");
   return false;
 };
 
@@ -40,7 +39,7 @@ export const showNotification = (title, options = {}) => {
 
   if (Notification.permission !== "granted") {
     console.log("❌ No permission to show notification");
-    alert("Please enable notifications first!");
+    console.log("Please enable notifications first!");
     return null;
   }
   // create the notification
@@ -69,7 +68,7 @@ export const showNotification = (title, options = {}) => {
     return notification;
   } catch (error) {
     console.error("Error creating notification:", error);
-    alert("Error showing notification: " + error.message);
+    console.log("Notification error: " + error.message);
     return null;
   }
 };

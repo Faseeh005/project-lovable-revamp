@@ -9,8 +9,8 @@ android {
 
 apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
 dependencies {
+    implementation project(':capgo-capacitor-native-biometric')
     implementation project(':capacitor-health')
-    implementation project(':capacitor-native-biometric')
 
 }
 

@@ -828,6 +828,14 @@ function Dashboard({ user, userProfile, medications, setActivePage }) {
   // Hover state for donut chart tooltip
   const [hoveredSegment, setHoveredSegment] = useState(null); // 'taken', 'pending', or null
 
+  // HealthKit disabled for Android compatibility
+  /* const healthKitAvailable = false;
+  const healthKitAuthorized = false;
+  const healthKitLoading = false;
+  const requestHealthKitAuth = async () => false;
+  const refreshHealthData = async () => {};
+  const weeklySteps = []; */
+
   // Healthkit Integration connects to Apple HealthKit on iOS devices.
   // On localhost it returns default values and isAvailable = false.
 
