@@ -4447,13 +4447,15 @@ body,
   }
 
   .header-right {
-    justify-content: flex-start !important;
+    justify-content: flex-end !important;
     flex-wrap: wrap !important;
     row-gap: 8px !important;
+    column-gap: 8px !important;
   }
 
   .header-user {
-    max-width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
     overflow-wrap: anywhere;
     font-size: clamp(0.84rem, 3.2vw, 0.95rem) !important;
   }
@@ -4471,11 +4473,6 @@ body,
   }
 
   .notifications-dropdown {
-    position: absolute !important;
-    top: calc(100% + 8px) !important;
-    right: -12px !important;
-    left: auto !important;
-    bottom: auto !important;
     width: calc(100vw - 24px) !important;
     max-width: 340px !important;
     max-height: 70vh !important;
