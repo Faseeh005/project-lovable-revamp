@@ -1,16 +1,18 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getDatabase } from 'firebase/database';
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDljJKaPiA9S5DLLtb1yUMp6oKutoPYbN0",
-  authDomain: "medfit-health-app.firebaseapp.com",
-  projectId: "medfit-health-app",
-  storageBucket: "medfit-health-app.firebasestorage.app",
-  messagingSenderId: "257682947478",
-  appId: "1:257682947478:web:b5d681b7eba5d472ef31b7",
-  databaseURL: "https://medfit-health-app-default-rtdb.europe-west1.firebasedatabase.app"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
 };
+
+console.log("API KEY:", process.env.REACT_APP_FIREBASE_API_KEY);
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);

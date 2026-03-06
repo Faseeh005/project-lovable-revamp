@@ -1,0 +1,9 @@
+com.getcapacitor.android.capacitor-android-pngs-0 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\android\build-cache\capacitor-android\generated\res\pngs\debug
+com.getcapacitor.android.capacitor-android-resValues-1 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\android\build-cache\capacitor-android\generated\res\resValues\debug
+com.getcapacitor.android.capacitor-android-updated_navigation_xml-2 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\android\build-cache\capacitor-android\generated\updated_navigation_xml\debug
+com.getcapacitor.android.capacitor-android-mergeDebugResources-3 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\android\build-cache\capacitor-android\intermediates\incremental\debug\mergeDebugResources\merged.dir
+com.getcapacitor.android.capacitor-android-mergeDebugResources-4 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\android\build-cache\capacitor-android\intermediates\incremental\debug\mergeDebugResources\stripped.dir
+com.getcapacitor.android.capacitor-android-debug-5 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\android\build-cache\capacitor-android\intermediates\merged_res\debug\mergeDebugResources
+com.getcapacitor.android.capacitor-android-debug-6 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\android\build-cache\capacitor-android\intermediates\packaged_res\debug\packageDebugResources
+com.getcapacitor.android.capacitor-android-debug-7 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\@capacitor\android\capacitor\src\debug\res
+com.getcapacitor.android.capacitor-android-main-8 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\@capacitor\android\capacitor\src\main\res

@@ -6,11 +6,9 @@ const config: CapacitorConfig = {
   webDir: "build",
   server: {
     androidScheme: "https",
-    cleartext: true,
   },
   android: {
-    allowMixedContent: true,
-    webContentsDebuggingEnabled: true,
+    webContentsDebuggingEnabled: process.env.NODE_ENV !== "production",
   },
 };
 

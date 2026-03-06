@@ -1,0 +1,9 @@
+com.fit_up.health.capacitor.capacitor-health-pngs-0 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\android\build-cache\capacitor-health\generated\res\pngs\debug
+com.fit_up.health.capacitor.capacitor-health-resValues-1 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\android\build-cache\capacitor-health\generated\res\resValues\debug
+com.fit_up.health.capacitor.capacitor-health-updated_navigation_xml-2 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\android\build-cache\capacitor-health\generated\updated_navigation_xml\debug
+com.fit_up.health.capacitor.capacitor-health-mergeDebugResources-3 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\android\build-cache\capacitor-health\intermediates\incremental\debug\mergeDebugResources\merged.dir
+com.fit_up.health.capacitor.capacitor-health-mergeDebugResources-4 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\android\build-cache\capacitor-health\intermediates\incremental\debug\mergeDebugResources\stripped.dir
+com.fit_up.health.capacitor.capacitor-health-debug-5 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\android\build-cache\capacitor-health\intermediates\merged_res\debug\mergeDebugResources
+com.fit_up.health.capacitor.capacitor-health-debug-6 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\android\build-cache\capacitor-health\intermediates\packaged_res\debug\packageDebugResources
+com.fit_up.health.capacitor.capacitor-health-debug-7 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\capacitor-health\android\src\debug\res
+com.fit_up.health.capacitor.capacitor-health-main-8 C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\capacitor-health\android\src\main\res

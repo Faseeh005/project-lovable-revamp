@@ -1,9 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-<uses-permission android:name="android.permission.USE_BIOMETRIC" />
-<uses-permission android:name="android.permission.USE_FINGERPRINT" />
 
-<uses-permission android:name="android.permission.INTERNET" />
+    <!--
+        Biometric / fingerprint permissions — used by the login screen
+        to allow users to sign in with their fingerprint or face ID.
+        USE_BIOMETRIC covers Android 9+, USE_FINGERPRINT is the older
+        API needed for Android 6-8 compatibility.
+    -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+
+    <!-- Standard internet access — needed for Firebase (login, database) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--
+        Health Connect permissions (Android 8.0+ / API level 26+)
+        These tell Android which health data types the app wants to READ.
+        The user will be shown a permission dialog by Health Connect the
+        first time they tap the "Connect" button on the dashboard.
+
+        Note: these only declare intent — the user can still deny them.
+        We request them at runtime through the capacitor-health plugin.
+    -->
+    <uses-permission android:name="android.permission.health.READ_STEPS" />
+    <uses-permission android:name="android.permission.health.READ_ACTIVE_CALORIES_BURNED" />
+    <uses-permission android:name="android.permission.health.READ_DISTANCE" />
+    <uses-permission android:name="android.permission.health.READ_HEART_RATE" />
+
+    <!--
+        This queries block tells Android that our app needs to be able to
+        "see" the Health Connect app (package: com.google.android.apps.healthdata).
+        Without this, Android 11+ privacy restrictions would stop us detecting
+        whether Health Connect is even installed on the device.
+    -->
+    <queries>
+        <package android:name="com.google.android.apps.healthdata" />
+    </queries>
 
     <application
         android:allowBackup="true"
@@ -21,13 +53,40 @@
             android:launchMode="singleTask"
             android:exported="true">
 
+            <!-- Standard launcher intent — makes this the app's entry point -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!--
+                Health Connect requires apps to provide a "permissions rationale" —
+                a screen explaining why the app needs health access. Health Connect
+                shows a link to this when the user views our permissions.
+
+                This intent filter handles Android 13 and below.
+            -->
+            <intent-filter>
+                <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+            </intent-filter>
+
+            <!--
+                Same rationale requirement but for Android 14 and above,
+                which changed how permission usage screens are launched.
+                Both filters are needed to cover all supported Android versions.
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />
+                <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
+            </intent-filter>
+
         </activity>
 
+        <!--
+            FileProvider — used by Capacitor internally for sharing files
+            between the app and other Android components (e.g. camera, storage).
+            The authorities value uses the app's package name to keep it unique.
+        -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -35,11 +94,9 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+                android:resource="@xml/file_paths" />
         </provider>
+
     </application>
 
-    <!-- Permissions -->
-
-    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

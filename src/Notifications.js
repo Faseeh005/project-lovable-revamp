@@ -4,7 +4,7 @@ export const requestNotificationPermission = async () => {
   console.log("Requesting notification permission...");
   // check if browser supports notifications at all
   if (!("Notification" in window)) {
-    console.log("This browser does not support notifications");
+    console.log("Notifications not supported");
     return false;
   }
 

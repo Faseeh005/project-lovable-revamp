@@ -1,0 +1,31 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.fit_up.health.capacitor" >
+4
+5    <uses-sdk android:minSdkVersion="26" />
+5-->INJECTED
+5-->INJECTED
+6
+7    <uses-permission android:name="android.permission.health.READ_STEPS" />
+7-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\capacitor-health\android\src\main\AndroidManifest.xml:2:5-75
+7-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\capacitor-health\android\src\main\AndroidManifest.xml:2:22-73
+8    <uses-permission android:name="android.permission.health.READ_EXERCISE" />
+8-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\capacitor-health\android\src\main\AndroidManifest.xml:3:5-78
+8-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\capacitor-health\android\src\main\AndroidManifest.xml:3:22-76
+9    <uses-permission android:name="android.permission.health.READ_DISTANCE" />
+9-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\capacitor-health\android\src\main\AndroidManifest.xml:4:5-78
+9-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\capacitor-health\android\src\main\AndroidManifest.xml:4:22-76
+10    <uses-permission android:name="android.permission.health.READ_ACTIVE_CALORIES_BURNED" />
+10-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\capacitor-health\android\src\main\AndroidManifest.xml:5:5-92
+10-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\capacitor-health\android\src\main\AndroidManifest.xml:5:22-90
+11    <uses-permission android:name="android.permission.health.READ_TOTAL_CALORIES_BURNED" />
+11-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\capacitor-health\android\src\main\AndroidManifest.xml:6:5-91
+11-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\capacitor-health\android\src\main\AndroidManifest.xml:6:22-89
+12    <uses-permission android:name="android.permission.health.READ_HEART_RATE" />
+12-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\capacitor-health\android\src\main\AndroidManifest.xml:7:5-80
+12-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\capacitor-health\android\src\main\AndroidManifest.xml:7:22-78
+13    <uses-permission android:name="android.permission.health.READ_EXERCISE_ROUTE" />
+13-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\capacitor-health\android\src\main\AndroidManifest.xml:8:5-84
+13-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\capacitor-health\android\src\main\AndroidManifest.xml:8:22-82
+14
+15</manifest>

@@ -183,16 +183,14 @@ function Auth({ user, setUser }) {
     try {
       const credentials = await getBiometricCredentials();
 
-      if (credentials) {
+      if (credentials && credentials.email) {
         await signInWithEmailAndPassword(
           auth,
           credentials.email,
           credentials.password,
         );
       } else {
-        if (credentials.error !== "Authentication failed") {
-          setError(credentials.error || "Biometric login failed");
-        }
+        setError("Biometric login failed. Please use email and password.");
       }
     } catch (error) {
       console.error("Biometric login error:", error);

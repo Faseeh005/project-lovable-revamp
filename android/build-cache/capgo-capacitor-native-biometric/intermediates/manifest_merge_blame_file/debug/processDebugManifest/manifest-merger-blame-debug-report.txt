@@ -1,0 +1,21 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="ee.forgr.biometric.capacitornativebiometric" >
+4
+5    <uses-sdk android:minSdkVersion="26" />
+5-->INJECTED
+5-->INJECTED
+6
+7    <application>
+7-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\@capgo\capacitor-native-biometric\android\src\main\AndroidManifest.xml:5:5-10:19
+8        <activity
+8-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\@capgo\capacitor-native-biometric\android\src\main\AndroidManifest.xml:6:9-9:68
+9            android:name="ee.forgr.biometric.AuthActivity"
+9-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\@capgo\capacitor-native-biometric\android\src\main\AndroidManifest.xml:7:13-59
+10            android:label="@string/title_activity_auth_activity"
+10-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\@capgo\capacitor-native-biometric\android\src\main\AndroidManifest.xml:8:13-65
+11            android:theme="@style/AppTheme.Transparent" />
+11-->C:\Users\fasee\Desktop\FinalYearProject\js-practice\medication-tracker-practice\node_modules\@capgo\capacitor-native-biometric\android\src\main\AndroidManifest.xml:9:13-56
+12    </application>
+13
+14</manifest>

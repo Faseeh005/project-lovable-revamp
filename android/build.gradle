@@ -1,23 +1,26 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-// Patch to fix capacitor-health and other plugins using deprecated proguard-android.txt with AGP 9.1.0+
+// Patch to fix plugins using deprecated proguard-android.txt with AGP 9.1.0+
 def patchNodeModules = {
-    def plugins = ['capacitor-health', '@capgo/capacitor-native-biometric']
+    def plugins = ['capacitor-health', '@capgo/capacitor-native-biometric', '@capacitor-community/text-to-speech']
     plugins.each { plugin ->
         def buildFile = file("../node_modules/${plugin}/android/build.gradle")
         if (buildFile.exists()) {
             def content = buildFile.text
-            if (content.contains("'proguard-android.txt'")) {
+            if (content.contains("proguard-android.txt")) {
                 println "Patching ${plugin} build.gradle to use proguard-android-optimize.txt"
-                buildFile.text = content.replace("'proguard-android.txt'", "'proguard-android-optimize.txt'")
+                def newContent = content.replace("'proguard-android.txt'", "'proguard-android-optimize.txt'")
+                newContent = newContent.replace("\"proguard-android.txt\"", "'proguard-android-optimize.txt'")
+                buildFile.text = newContent
             }
+        } else {
+            println "Warning: Could not find build.gradle for ${plugin} at ${buildFile.absolutePath}"
         }
     }
 }
 patchNodeModules()
 
 buildscript {
-    
     repositories {
         google()
         mavenCentral()
@@ -25,9 +28,6 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:9.1.0'
         classpath 'com.google.gms:google-services:4.4.4'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
     }
 }
 
@@ -38,8 +38,15 @@ allprojects {
         google()
         mavenCentral()
     }
+    
+    // Shorten build paths to avoid Windows "Filename too long" errors
+    // This moves build outputs from node_modules/.../build to android/build-cache/...
+    if (project.hasProperty('projectDir') && project.projectDir.absolutePath.contains('node_modules')) {
+        project.buildDir = new File(rootProject.projectDir, "build-cache/${project.name}")
+    }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+    delete "${rootProject.projectDir}/build-cache"
 }

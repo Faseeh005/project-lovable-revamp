@@ -4,35 +4,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { database } from "./firebase";
 import { ref, onValue } from "firebase/database";
 
-// Import speak function from parent App component
-// We'll pass it via props instead
+// VOICE — works on Android (Capacitor native TTS) AND web/iOS (Web Speech API)
+import { speak, stopSpeaking } from "./tts";
 
-const speak = (text, isEnabled) => {
-  if (!isEnabled) return;
-  // Check if browser supports speech synthesis
-  if (!window.speechSynthesis) {
-    console.warn("Speech synthesis not supported");
-    return;
-  }
-  // Cancel any currently playing speech
-  window.speechSynthesis.cancel();
-  // Create new speech utterance
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.rate = 1.0;
-  utterance.pitch = 1.0;
-  utterance.volume = 1.0;
-  utterance.lang = "en-GB";
-  utterance.onerror = (e) => console.error("Speech error:", e);
-  // Speak the text
-  window.speechSynthesis.speak(utterance);
-};
-
-// ──────────────────────────────────────────────────────────────────────────────
 // Chat Component Function
 // Props:
 //   - user: currently logged-in user object
 //   - setActivePage: function to navigate to other pages
-// ──────────────────────────────────────────────────────────────────────────────
 
 function Chat({ user, setActivePage, voiceEnabled, setVoiceEnabled }) {
   // messages - array of all chat messages (user and assistant)
@@ -660,7 +638,7 @@ function Chat({ user, setActivePage, voiceEnabled, setVoiceEnabled }) {
           // Stop playing any speech
           if (!newVoiceState) {
             // If turning voice OFF stop all speech
-            window.speechSynthesis.cancel();
+            stopSpeaking();
           }
 
           // Announce the change only if turning ON
